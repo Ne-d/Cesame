@@ -1,0 +1,16 @@
+Basic Feature goals:
+
+
+- Gather monitoring data:
+    - GPU: 5 / 33 done lessgoooooo
+	- Probably more, there's tons of stuff exposed by NVML
+
+    - Others:
+	- Memory (RAM) transfer rate / usage time percentage (maybe)
+	- Disk / SSD space used / free / total / delta (useless but cool)
+	- Disk / SSD transfer rate / usage time percentage
+
+- Display the data
+
+    - Bar Graph Rendering
+    - Translucent window support (fuck you XLib) (not you Cairo, you're cool)
