@@ -1,5 +1,5 @@
 TEMPLATE = app
-CONFIG += console c++17
+CONFIG += console c++20
 
 QT += core gui
 
@@ -12,7 +12,9 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+        cesamebargraph.cpp \
         cesamecpucoregraph.cpp \
+        cesamelabel.cpp \
         cesamelinegraph.cpp \
         cesamewindow.cpp \
         cpumonitor.cpp \
@@ -22,7 +24,9 @@ SOURCES += \
         utils.cpp
 
 HEADERS += \
+	cesamebargraph.h \
 	cesamecpucoregraph.h \
+	cesamelabel.h \
 	cesamelinegraph.h \
 	cesamewindow.h \
 	cpumonitor.h \
@@ -36,6 +40,7 @@ DISTFILES += \
 INCLUDEPATH += /opt/cuda/include/
 
 LIBS += -L"/usr/lib/" -lnvidia-ml
+LIBS += -lfmt
 
 # Default rules for deployment.
 #qnx: target.path = /tmp/$${TARGET}/bin

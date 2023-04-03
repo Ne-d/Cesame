@@ -5,6 +5,7 @@
 #include <sstream>
 #include <iomanip>
 #include <QString>
+#include <iostream>
 
 std::string exec(const char *cmd)
 {
@@ -37,4 +38,14 @@ double clamp_d(double value, double min, double max) {
         return max;
     }
     return value;
+}
+
+void printTable(std::vector<double> table)
+{
+    for(unsigned int i = 0; i < table.size(); i++)
+    {
+        std::cout << table.at(i) << " ";
+    }
+
+    std::cout << std::endl;
 }

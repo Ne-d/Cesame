@@ -10,7 +10,7 @@ private:
     // NVML objects
     nvmlDevice_t device;
 
-    double VRAMDivisionFactor = 1024*1024*1024;
+    double VRAMDivisionFactor = 1024*1024*128;
 
 public:
     gpuMonitor(int deviceIndex);

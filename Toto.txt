@@ -10,7 +10,9 @@ Basic Feature goals:
 	- Disk / SSD space used / free / total / delta (useless but cool)
 	- Disk / SSD transfer rate / usage time percentage
 
-- Display the data
+- Display the data:
+    - Translucent window support (Qt stuff probably)
 
-    - Bar Graph Rendering
-    - Translucent window support (fuck you XLib) (not you Cairo, you're cool)
+
+- Quality of life / compatibility features:
+    - Automatic selection of correct hwmon devices (cpu temp).

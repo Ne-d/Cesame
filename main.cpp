@@ -2,6 +2,7 @@
 
 // Standard library
 #include <iostream>
+#include <fmt/core.h>
 
 // Qt
 #include <QApplication>
@@ -12,8 +13,6 @@
 #include "cesamelinegraph.h"
 #include "cesamecpucoregraph.h"
 
-// Misc.
-#include "utils.h"
 
 void setupLayouts(CesameWindow* window)
 {
@@ -43,7 +42,7 @@ void setupLayouts(CesameWindow* window)
     cpuTempSettings.criticalValue = 100;
     cpuTempSettings.prefix = "CPU Temperature: ";
     cpuTempSettings.postfix = " °C";
-    CesameLineGraph *cpuTempLineGraph = new CesameLineGraph(window, &(window->cpuMon->temp), cpuUsageSettings);
+    CesameLineGraph *cpuTempLineGraph = new CesameLineGraph(window, &(window->cpuMon->temp), cpuTempSettings);
 
     CesameLineGraphSettings cpuPowerSettings;
     cpuPowerSettings.maxValue = 70;
@@ -61,7 +60,7 @@ void setupLayouts(CesameWindow* window)
     cpuClockSettings.postfix = " MHz";
     CesameLineGraph *cpuClockLineGraph = new CesameLineGraph(window, &(window->cpuMon->clockSpeeds.at(0)), cpuClockSettings);
 
-    CesameCpuCoreGraph *cpuCoreGraph = new CesameCpuCoreGraph(window);
+    CesameCpuCoreGraph* cpuCoreGraph = new CesameCpuCoreGraph(window);
 
     cpuLayout->addWidget(cpuUsageLineGraph);
     cpuLayout->addWidget(cpuTempLineGraph);
@@ -111,20 +110,19 @@ void setupLayouts(CesameWindow* window)
     // Side Graphs
 
     CesameLineGraphSettings ramUsageSettings;
-    gpuClockSettings.maxValue = window->memoryMon->totalMemoryGb;
-    gpuClockSettings.alarmValue = 14;
-    gpuClockSettings.criticalValue = 15;
-    gpuClockSettings.prefix = "RAM Usage: ";
-    gpuClockSettings.postfix = " GB";
+    ramUsageSettings.maxValue = window->memoryMon->totalMemoryGb;
+    ramUsageSettings.alarmValue = 24;
+    ramUsageSettings.criticalValue = 30;
+    ramUsageSettings.prefix = "RAM Usage: ";
+    ramUsageSettings.postfix = " GB";
     CesameLineGraph *ramUsageLineGraph = new CesameLineGraph(window, &(window->memoryMon->usedMemoryGb), ramUsageSettings);
-    printf("%f\n", window->memoryMon->usedMemoryGb);
 
     CesameLineGraphSettings vramUsageSettings;
-    gpuClockSettings.maxValue = window->gpuMon->totalVRAM;
-    gpuClockSettings.alarmValue = 6;
-    gpuClockSettings.criticalValue = 7;
-    gpuClockSettings.prefix = "VRAM Usage: ";
-    gpuClockSettings.postfix = " GB";
+    vramUsageSettings.maxValue = window->gpuMon->totalVRAM;
+    vramUsageSettings.alarmValue = 6;
+    vramUsageSettings.criticalValue = 7;
+    vramUsageSettings.prefix = "VRAM Usage: ";
+    vramUsageSettings.postfix = " GB";
     CesameLineGraph *vramUsageLineGraph = new CesameLineGraph(window, &(window->gpuMon->usedVRAM), vramUsageSettings);
 
     sideLayout->addWidget(ramUsageLineGraph);
@@ -134,14 +132,14 @@ void setupLayouts(CesameWindow* window)
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
-    // Window and layout creation
     CesameWindow *window = new CesameWindow(nullptr);
-    window->update();
 
     window->setWindowTitle(QApplication::translate("windowTitle", "Cesame"));
     window->show();
 
     setupLayouts(window);
+
+    std::cout << fmt::format("Test {} is working. {}, {}", 42, "Nice", 123.456789) << std::endl;
 
     return app.exec();
 }

@@ -9,7 +9,7 @@ private:
     // File streams
     std::string statFile = "/proc/stat";
     std::string infoFile = "/proc/cpuinfo";
-    std::string tempFile = "/sys/class/hwmon/hwmon3/temp1_input";
+    std::string tempFile = "/sys/class/hwmon/hwmon4/temp1_input";
 
     std::ifstream statStream;
     std::ifstream infoStream;

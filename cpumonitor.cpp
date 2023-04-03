@@ -51,17 +51,19 @@ void cpuMonitor::update() {
     std::stringstream iss;
 
     // CPU load section:
-    int fieldNb = 0;
     std::string field;
     statStream.seekg(0, statStream.beg); // Seek to the begining of the file
 
     for(unsigned int l = 0; l <= coreCount; l++) { // Begin looping through all CPU lines
-        fieldNb = 0;
+        int fieldNb = 0;
         getline(statStream, line);
+        iss.clear();
         iss.str(line);
 
         while(getline(iss, field, ' ')) { // Begin looping through all fields in the current line
-            if(field == "" || field.at(0) == 'c') { continue; }
+
+            if(field == "" || field.at(0) == 'c') { continue; } // Ignore the first token indicating cpu number (cpu0, cpu1, cpu2, etc.)
+
             fields.at(l).at(fieldNb) = stoi(field);
             fieldNb++;
         }

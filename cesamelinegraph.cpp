@@ -29,7 +29,8 @@ CesameLineGraph::CesameLineGraph(CesameWindow* parent, double* inValue, CesameLi
 
 void CesameLineGraph::paintEvent(QPaintEvent *event) {
 
-    QPainter painter(this);
+    QPainter painter;
+    painter.begin(this);
 
     rect = contentsRect().marginsRemoved(rectangleMargins);
 
@@ -38,6 +39,7 @@ void CesameLineGraph::paintEvent(QPaintEvent *event) {
     pen.setStyle(Qt::SolidLine);
     pen.setCapStyle(Qt::FlatCap);
     pen.setJoinStyle(Qt::MiterJoin);
+    pen.setWidthF(LINE_WIDTH);
     painter.setPen(pen);
     painter.setFont(font);
 
@@ -89,6 +91,7 @@ void CesameLineGraph::paintEvent(QPaintEvent *event) {
 
         // Draw line
         pen.setColor(prevLineColor); // Probably should be lineColor, idk why prevLineColor works better
+        pen.setWidthF(LINE_WIDTH);
         painter.setPen(pen);
         painter.drawLine(QLineF(rect.x() + rect.width() - ((i) * xStep), rect.y() + rect.height() - ptHeight,
                                 rect.x() + rect.width() - ((i + 1) * xStep), rect.y() + rect.height() - nextPtHeight));
@@ -97,6 +100,7 @@ void CesameLineGraph::paintEvent(QPaintEvent *event) {
     // Draw Rectangle
     pen.setWidth(outlineWidth);
     pen.setColor(borderColor);
+    pen.setWidthF(LINE_WIDTH);
     painter.setPen(pen);
     painter.drawRect(rect);
 

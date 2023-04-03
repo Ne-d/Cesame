@@ -2,9 +2,9 @@
 #define CESAMECPUCOREGRAPH_H
 
 #include <QWidget>
+#include "cesamebargraph.h"
 #include "cesamewindow.h"
-
-#define COLOR_WHITE QColor(255, 255, 255, 255)
+#include "qgridlayout.h"
 
 class CesameCpuCoreGraph : public QWidget
 {
@@ -19,15 +19,22 @@ public slots:
 signals:
 
 private:
+    QGridLayout* grid;
+
     QMargins margins;
 
     double width;
     double height;
 
-    double horizontalSpacing;
-    double verticalSpacing;
+    double horizontalSpacing = 20;
+    double verticalSpacing = 20;
 
-    int lines;
+    unsigned int coreCount;
+    unsigned int lines;
+
+    std::vector<double> usagePerCore;
+
+    QList<CesameBarGraph*> barGraphList;
 
     QColor color;
 

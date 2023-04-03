@@ -1,13 +1,11 @@
 #ifndef CESAMELINEGRAPH_H
 #define CESAMELINEGRAPH_H
 
-#include "cesamewindow.h"
 #include <QWidget>
 #include <deque>
 
-#define COLOR_WHITE QColor(255, 255, 255, 255)
-#define COLOR_ORANGE QColor(255, 192, 77, 255)
-#define COLOR_RED QColor(255, 77, 77, 255)
+#include "cesamewindow.h"
+#include "utils.h"
 
 struct CesameLineGraphSettings
 {
