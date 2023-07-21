@@ -1,38 +1,29 @@
-#include "cesamelinegraph.h"
-#include "cesamewindow.h"
+#include "LineGraph.h"
+#include "CesameWindow.h"
 #include "qpainter.h"
-#include "utils.h"
+#include "Utils.h"
 #include <iostream>
 
-CesameLineGraph::CesameLineGraph(CesameWindow* parent, double* inValue, CesameLineGraphSettings settings)
+using namespace Cesame;
+
+LineGraph::LineGraph(CesameWindow* parent, double* inValue, LineGraphSettings settings)
 {
     // Setting up the automatic refresh based on the parent CesameWindow's timer.
-    connect(parent->timer, &QTimer::timeout, this, QOverload<>::of(&CesameLineGraph::updateData));
+    connect(parent->timer, &QTimer::timeout, this, QOverload<>::of(&LineGraph::updateData));
 
     value = inValue;
-    textMargins = QMargins(10, 10, 10, 40);
-    rectangleMargins = QMargins(textMargins.left(),
-                                textMargins.top(),
-                                textMargins.right(),
-                                textMargins.bottom() + font.pointSize() * 3
-                                );
 
     tableLength = settings.tableLength;
 
     maxValue = settings.maxValue;
     alarmValue = settings.alarmValue;
     criticalValue = settings.criticalValue;
-
-    prefix = settings.prefix;
-    postfix = settings.postfix;
 }
 
-void CesameLineGraph::paintEvent(QPaintEvent *event) {
+void LineGraph::paintEvent(QPaintEvent *event) {
 
     QPainter painter;
     painter.begin(this);
-
-    rect = contentsRect().marginsRemoved(rectangleMargins);
 
     // Setting up QPen and QPainter parameters
     QPen pen;
@@ -41,7 +32,6 @@ void CesameLineGraph::paintEvent(QPaintEvent *event) {
     pen.setJoinStyle(Qt::MiterJoin);
     pen.setWidthF(LINE_WIDTH);
     painter.setPen(pen);
-    painter.setFont(font);
 
     QColor lineColor = color;
     QColor prevLineColor;
@@ -49,8 +39,8 @@ void CesameLineGraph::paintEvent(QPaintEvent *event) {
 
     double ptHeight = 0;
     double nextPtHeight = 0;
-    double xStep = rect.width() / tableLength;
-    double heightMultiplier = rect.height() / maxValue;
+    double xStep = contentsRect().width() / tableLength;
+    double heightMultiplier = contentsRect().height() / maxValue;
 
     // Main drawing loop
     for(unsigned int i = 0; i < table.size(); i++) {
@@ -79,12 +69,12 @@ void CesameLineGraph::paintEvent(QPaintEvent *event) {
         }
 
         // Caluclate point height
-        ptHeight = clamp_d(heightMultiplier * table.at(i), 0, rect.height());
+        ptHeight = clamp_d(heightMultiplier * table.at(i), 0, contentsRect().height());
         if(i < table.size() - 1) {
-            nextPtHeight = clamp_d(heightMultiplier * table.at(i + 1), 0, rect.height());
+            nextPtHeight = clamp_d(heightMultiplier * table.at(i + 1), 0, contentsRect().height());
         }
         else {
-            nextPtHeight = clamp_d(heightMultiplier * table.at(i), 0, rect.height());
+            nextPtHeight = clamp_d(heightMultiplier * table.at(i), 0, contentsRect().height());
         }
         // TODO: Could probably be optimized by remembering the last point's position.
         // Using classes in this version could come in handy for that kind of stuff.
@@ -93,8 +83,9 @@ void CesameLineGraph::paintEvent(QPaintEvent *event) {
         pen.setColor(prevLineColor); // Probably should be lineColor, idk why prevLineColor works better
         pen.setWidthF(LINE_WIDTH);
         painter.setPen(pen);
-        painter.drawLine(QLineF(rect.x() + rect.width() - ((i) * xStep), rect.y() + rect.height() - ptHeight,
-                                rect.x() + rect.width() - ((i + 1) * xStep), rect.y() + rect.height() - nextPtHeight));
+        // TODO: Why the fuck is this in a single line?
+        painter.drawLine(QLineF(contentsRect().x() + contentsRect().width() - ((i) * xStep), contentsRect().y() + contentsRect().height() - ptHeight,
+                                contentsRect().x() + contentsRect().width() - ((i + 1) * xStep), contentsRect().y() + contentsRect().height() - nextPtHeight));
     }
 
     // Draw Rectangle
@@ -102,22 +93,31 @@ void CesameLineGraph::paintEvent(QPaintEvent *event) {
     pen.setColor(borderColor);
     pen.setWidthF(LINE_WIDTH);
     painter.setPen(pen);
-    painter.drawRect(rect);
-
-    painter.drawText(contentsRect().marginsRemoved(textMargins).bottomLeft(), prefix + formatDouble(*value) + postfix);
+    painter.drawRect(contentsRect());
 
     painter.end();
 }
 
-void CesameLineGraph::updateData()
+void LineGraph::updateData()
 {
     updateTable(*value);
     this->update();
 }
 
-void CesameLineGraph::updateTable(double value) {
+void LineGraph::updateTable(double value) {
     table.push_front(value);
     if(table.size() > tableLength) {
         table.pop_back();
     }
+}
+
+LineGraphText::LineGraphText(CesameWindow *parent, double *inValue, LineGraphSettings lineGraphSettings)
+{
+    lineGraph = new LineGraph(parent, inValue, lineGraphSettings);
+    label = new Label(parent);
+
+    addWidget(lineGraph);
+    addWidget(label);
+
+    setSpacing(0);
 }

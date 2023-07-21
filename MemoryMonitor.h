@@ -3,7 +3,10 @@
 
 #include <fstream>
 
-class memoryMonitor
+namespace Cesame
+{
+
+class MemoryMonitor
 {
 private:
     // File streams
@@ -18,7 +21,7 @@ private:
     const double divisionFactor = 1000.0 * 1000.0;
 
 public:
-    memoryMonitor();
+    MemoryMonitor();
 
     void update();
     std::string trimLine(std::string line);
@@ -29,5 +32,7 @@ public:
     double usedMemoryGb = -1;
     double availableMemoryGb = -1;
 };
+
+}
 
 #endif // MEMORYMONITOR_H

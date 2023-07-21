@@ -1,20 +1,20 @@
-#ifndef CESAMECPUCOREGRAPH_H
-#define CESAMECPUCOREGRAPH_H
+#ifndef CPUCOREGRAPH_H
+#define CPUCOREGRAPH_H
 
 #include <QWidget>
-#include "cesamebargraph.h"
-#include "cesamewindow.h"
+#include "BarGraph.h"
+#include "CesameWindow.h"
 #include "qgridlayout.h"
 
-class CesameCpuCoreGraph : public QWidget
+namespace Cesame
+{
+
+class CpuCoreGraph : public QWidget
 {
     Q_OBJECT
 public:
-    CesameCpuCoreGraph(CesameWindow *parent = nullptr);
+    CpuCoreGraph(CesameWindow *parent, Cesame::ColorList inColorList);
     void updateData();
-
-public slots:
-    void paintEvent(QPaintEvent *event);
 
 signals:
 
@@ -34,11 +34,13 @@ private:
 
     std::vector<double> usagePerCore;
 
-    QList<CesameBarGraph*> barGraphList;
+    QList<Cesame::BarGraph*> barGraphList;
 
     QColor color;
 
-    cpuMonitor* cpuMon;
+    Cesame::CpuMonitor* cpuMon;
 };
 
-#endif // CESAMECPUCOREGRAPH_H
+}
+
+#endif // CPUCOREGRAPH_H

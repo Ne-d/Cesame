@@ -1,7 +1,9 @@
-#include "memorymonitor.h"
+#include "MemoryMonitor.h"
 #include <iostream>
 
-memoryMonitor::memoryMonitor()
+using namespace Cesame;
+
+MemoryMonitor::MemoryMonitor()
 {
     // Initialize file streams
     infoStream.open(infoFile);
@@ -11,7 +13,7 @@ memoryMonitor::memoryMonitor()
 }
 
 
-void memoryMonitor::update() {
+void MemoryMonitor::update() {
     std::string line = "";
     infoStream.seekg(0);
 
@@ -38,7 +40,7 @@ void memoryMonitor::update() {
 }
 
 // Absolute hellscape of a function to only keep the numbers in a line from /proc/meminfo
-std::string memoryMonitor::trimLine(std::string line)
+std::string MemoryMonitor::trimLine(std::string line)
 {
     // Removing the last three characters.
     for(int i = 0; i < 3; i++) {

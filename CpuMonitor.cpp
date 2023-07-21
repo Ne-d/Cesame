@@ -1,12 +1,17 @@
 #include <iostream>
+#include <cstdio>
 #include <string>
 #include <sstream> // Why the fuck isn't it called 'stringstream'? That wasted 20 minutes of my life.
 
-#include "cpumonitor.h"
-#include "utils.h"
+#include "CpuMonitor.h"
+#include "Utils.h"
 
+using namespace Cesame;
 
-cpuMonitor::cpuMonitor() {
+CpuMonitor::CpuMonitor() {
+    // Initialization of timings
+    currentTimePoint = std::chrono::steady_clock::now();
+
     // Initialization of file streams
     statStream.open(statFile);
     if(!statStream.is_open()) {
@@ -40,13 +45,20 @@ cpuMonitor::cpuMonitor() {
         fields.at(i).resize(10, 0);
     }
 
-    update(); // Executing an update at first to avoid incorrect values on the first "user" call of update()
+    detectPackages();
+
+    update();
     update(); // I thought one would be enough. I guess not. Stupid program.
-    // TODO: Find out what I did wrong here to require two update (and fix the weird values shown at the first "user-requested" update.
+    // TODO: Find out what I did wrong here to require two update.
 }
 
 
-void cpuMonitor::update() {
+void CpuMonitor::update() {
+    // Timings
+    auto oldTimePoint = currentTimePoint;
+    currentTimePoint = std::chrono::steady_clock::now();
+    deltaTime = currentTimePoint - oldTimePoint;
+
     std::string line;
     std::stringstream iss;
 
@@ -97,7 +109,7 @@ void cpuMonitor::update() {
 
     // CPU Power section:
     prevEnergy = energy;
-    energy = stod(exec("sudo rdmsr -d -f 31:0 3221291675"));
+    energy = std::stod(exec("sudo rdmsr -d -f 31:0 3221291675")); // TODO: Implement this natively instead of calling a command.
 
     // CPU Clock sction
     int lineNb = 0;
@@ -129,11 +141,60 @@ void cpuMonitor::update() {
     }
 
     // Power draw
-    power = std::abs(energy - prevEnergy) / 65359.47712; // Division factor because the MSR reports energy in 15.3 joules increments.
+    //power = std::abs(energy - prevEnergy) / 65359.47712; // Division factor because the MSR reports energy in 15.3 joule increments.
+    power = 0;
+}
+
+void CpuMonitor::detectPackages()
+{
+    char filename[BUFSIZ];
+    FILE *fff;
+    int package;
+    unsigned int i = 0;
+
+    // Initialize all values of packageMap to -1
+    for(i = 0; i < MAX_PACKAGES; i++)
+    {
+        packageMap.push_back(-1);
+    }
+
+    // Debug:
+    std::cout << "\t";
+
+    for(i = 0; i < MAX_CPUS; i++) // For all cpu cores
+    {
+        // Set filename to the current cpu core's physical_package_id file.
+        sprintf(filename, "/sys/devices/system/cpu/cpu%d/topology/physical_package_id", i);
+
+        // Open the file, to read its content (number) and write it to package.
+        fff = fopen(filename, "r");
+        if(fff == NULL) break;
+
+        fscanf(fff, "%d", &package);
+        // Debug:
+        std::cout << i << "(" << package << ")";
+        if (i % 8 == 7) std::cout << "\n\t";
+        else std::cout << ", ";
+        fclose(fff);
+
+        if(packageMap.at(package) == -1)
+        {
+            totalPackages++;
+            packageMap.at(package) = i;
+        }
+    }
+
+    // Debug:
+    std::cout << "\n";
+
+    totalCores = i;
+
+    // Debug:
+    std::cout << "\tDetected " << totalCores << " cores in " << totalPackages << " packages\n" << std::endl;
 }
 
 // For debugging purposes
-void cpuMonitor::printFields()
+void CpuMonitor::printFields()
 {
     for(unsigned int l = 0; l <= coreCount; l++) {
         for(int f = 0; f <= 9; f++) {

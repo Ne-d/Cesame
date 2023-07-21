@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "Utils.h"
 #include <array>
 #include <bits/unique_ptr.h>
 #include <stdexcept>
@@ -6,8 +6,11 @@
 #include <iomanip>
 #include <QString>
 #include <iostream>
+#include <fmt/core.h>
 
-std::string exec(const char *cmd)
+using namespace Cesame;
+
+std::string Cesame::exec(const char *cmd)
 {
     std::array<char, 128> buffer;
         std::string result;
@@ -21,7 +24,7 @@ std::string exec(const char *cmd)
         return result;
 }
 
-QString formatDouble(double n)
+QString Cesame::formatDouble(double n)
 {
     std::ostringstream str;
     str << std::fixed;
@@ -30,7 +33,8 @@ QString formatDouble(double n)
     return QString(str.str().c_str());
 }
 
-double clamp_d(double value, double min, double max) {
+
+double Cesame::clamp_d(double value, double min, double max) {
     if(value < min) {
         return min;
     }
@@ -40,7 +44,7 @@ double clamp_d(double value, double min, double max) {
     return value;
 }
 
-void printTable(std::vector<double> table)
+void Cesame::printTable(std::vector<double> table)
 {
     for(unsigned int i = 0; i < table.size(); i++)
     {

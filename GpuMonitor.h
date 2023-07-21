@@ -4,7 +4,10 @@
 #include <string>
 #include <nvml.h>
 
-class gpuMonitor
+namespace Cesame
+{
+
+class GpuMonitor
 {
 private:
     // NVML objects
@@ -13,7 +16,7 @@ private:
     double VRAMDivisionFactor = 1024*1024*128;
 
 public:
-    gpuMonitor(int deviceIndex);
+    GpuMonitor(int deviceIndex);
 
     void update();
 
@@ -65,5 +68,7 @@ public:
     double usedVRAM = -1;
     double freeVRAM = -1;
 };
+
+}
 
 #endif // GPUMONITOR_H

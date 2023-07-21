@@ -1,6 +1,5 @@
 Basic Feature goals:
 
-
 - Gather monitoring data:
     - GPU: 5 / 33 done lessgoooooo
 	- Probably more, there's tons of stuff exposed by NVML
@@ -13,6 +12,13 @@ Basic Feature goals:
 - Display the data:
     - Translucent window support (Qt stuff probably)
 
-
 - Quality of life / compatibility features:
-    - Automatic selection of correct hwmon devices (cpu temp).
+    - Automatic selection of correct hwmon devices (cpu temp), how the FUCK do I do that?
+    - AMD GPUs exist ? Well I'm screwed. Intel ain't no way tho.
+
+Le refactoring:
+
+- Namespaces, for fuck's sake
+-
+- Time, and it's gonna take a lot of it.
+- Line graphs cause seriously they're terrible right now.

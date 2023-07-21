@@ -6,9 +6,10 @@
 #include "qtimer.h"
 
 // Cesame monitoring includes
-#include "cpumonitor.h"
-#include "memorymonitor.h"
-#include "gpumonitor.h"
+#include "CpuMonitor.h"
+#include "MemoryMonitor.h"
+#include "GpuMonitor.h"
+#include "NetworkMonitor.h"
 
 class CesameWindow : public QWidget
 {
@@ -16,18 +17,21 @@ class CesameWindow : public QWidget
 public:
     explicit CesameWindow(QWidget *parent = nullptr);
 
-    cpuMonitor *cpuMon;
-    memoryMonitor *memoryMon;
-    gpuMonitor *gpuMon;
+    Cesame::CpuMonitor *cpuMon;
+    Cesame::MemoryMonitor *memoryMon;
+    Cesame::GpuMonitor *gpuMon;
+    Cesame::NetworkMonitor *networkMon;
+
     QTimer *timer;
 
 public slots:
     void update();
+    void resizeEvent(QResizeEvent *event) override;
 
 signals:
 
 private:
-
+    QWidget *background;
     int frameTime = 1000;
 };
 

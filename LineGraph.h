@@ -1,13 +1,19 @@
-#ifndef CESAMELINEGRAPH_H
-#define CESAMELINEGRAPH_H
+#ifndef LINEGRAPH_H
+#define LINEGRAPH_H
 
-#include <QWidget>
 #include <deque>
 
-#include "cesamewindow.h"
-#include "utils.h"
+#include <QWidget>
+#include <QVBoxLayout>
 
-struct CesameLineGraphSettings
+#include "CesameWindow.h"
+#include "Label.h"
+#include "Color.h"
+
+namespace Cesame
+{
+
+struct LineGraphSettings
 {
     unsigned int tableLength = 300;
 
@@ -15,20 +21,17 @@ struct CesameLineGraphSettings
     double alarmValue;
     double criticalValue;
 
-    QColor color = COLOR_WHITE;
-    QColor alarmColor = COLOR_ORANGE;
-    QColor criticalColor = COLOR_RED;
-
-    QString prefix;
-    QString postfix;
+    QColor color = CESAME_COLOR_DEFAULT;
+    QColor alarmColor = CESAME_COLOR_ORANGE;
+    QColor criticalColor = CESAME_COLOR_RED;
 };
 
-class CesameLineGraph : public QWidget
+class LineGraph : public QWidget
 {
     Q_OBJECT
 
 public:
-    CesameLineGraph(CesameWindow* parent, double* inValue, CesameLineGraphSettings settings);
+    LineGraph(CesameWindow* parent, double* inValue, LineGraphSettings settings);
 
     void updateTable(double value);
 
@@ -43,9 +46,6 @@ private:
     unsigned int tableLength = 100;
 
     // Dimensions
-    QRectF rect;
-    QMargins rectangleMargins;
-    QMargins textMargins;
     double maxValue = 100;
     double lineWidth = 1.75;
     double outlineWidth = 1.75;
@@ -56,11 +56,17 @@ private:
     QColor alarmColor = QColor(255, 192, 77, 255);
     double criticalValue = 75;
     QColor criticalColor = QColor(255, 77, 77, 255);
-
-    // Text
-    QString prefix = "";
-    QString postfix = "";
-    QFont font = QFont("Mono", 12);
 };
 
-#endif // CESAMELINEGRAPH_H
+class LineGraphText : public QVBoxLayout
+{
+public:
+    LineGraphText(CesameWindow* parent, double* inValue, LineGraphSettings lineGraphSettings);
+
+    LineGraph* lineGraph;
+    Label* label;
+};
+
+}
+
+#endif // LINEGRAPH_H
