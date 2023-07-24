@@ -35,6 +35,7 @@ HEADERS += \
 	Label.h \
 	LineGraph.h \
 	MemoryMonitor.h \
+	Monitor.h \
 	NetworkMonitor.h \
 	Utils.h
 

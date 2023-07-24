@@ -1,7 +1,13 @@
 #include <iostream>
-#include <cstdio>
+#include <fstream>
 #include <string>
 #include <sstream> // Why the fuck isn't it called 'stringstream'? That wasted 20 minutes of my life.
+
+#include <cmath>
+#include <cstdio>
+#include <errno.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #include "CpuMonitor.h"
 #include "Utils.h"
@@ -10,7 +16,7 @@ using namespace Cesame;
 
 CpuMonitor::CpuMonitor() {
     // Initialization of timings
-    currentTimePoint = std::chrono::steady_clock::now();
+    timePointCurrent = std::chrono::steady_clock::now();
 
     // Initialization of file streams
     statStream.open(statFile);
@@ -45,20 +51,29 @@ CpuMonitor::CpuMonitor() {
         fields.at(i).resize(10, 0);
     }
 
+    // Preparation of rapl access
     detectPackages();
 
+    coreEnergy.resize(totalCores / 2);
+    coreEnergyPrevious.resize(totalCores/ 2);
+    packageEnergy.resize(totalPackages);
+    packageEnergyPrevious.resize(totalPackages);
+
+    coreEnergyUnits = readMsr(0, AMD_MSR_PWR_UNIT);
+
+    timeUnit = (coreEnergyUnits & AMD_TIME_UNIT_MASK) >> 16;
+    energyUnit = (coreEnergyUnits & AMD_ENERGY_UNIT_MASK) >> 8;
+    powerUnit = (coreEnergyUnits & AMD_POWER_UNIT_MASK);
+
+    timeUnitAdjusted = pow(0.5, (double)(timeUnit));
+    energyUnitAdjusted = pow(0.5, (double)(energyUnit));
+    powerUnitAdjusted = pow(0.5, (double)(powerUnit));
+
     update();
-    update(); // I thought one would be enough. I guess not. Stupid program.
-    // TODO: Find out what I did wrong here to require two update.
 }
 
 
 void CpuMonitor::update() {
-    // Timings
-    auto oldTimePoint = currentTimePoint;
-    currentTimePoint = std::chrono::steady_clock::now();
-    deltaTime = currentTimePoint - oldTimePoint;
-
     std::string line;
     std::stringstream iss;
 
@@ -107,9 +122,10 @@ void CpuMonitor::update() {
     getline(tempStream, tempBuffer);
     temp = std::stod(tempBuffer) / 1000;
 
-    // CPU Power section:
-    prevEnergy = energy;
-    energy = std::stod(exec("sudo rdmsr -d -f 31:0 3221291675")); // TODO: Implement this natively instead of calling a command.
+    // CPU Power draw section:
+    updateEnergy();
+    deltaTime = timePointCurrent - timePointPrevious;
+    power = (packageEnergy.at(0) - packageEnergyPrevious.at(0)) / deltaTime.count();
 
     // CPU Clock sction
     int lineNb = 0;
@@ -139,10 +155,6 @@ void CpuMonitor::update() {
         usagePerCore.at(i) = (((double)activeTime.at(i) - (double)prevActiveTime.at(i)) /
                 ((double)totalTime.at(i) - (double)prevTotalTime.at(i))) * 100.0;
     }
-
-    // Power draw
-    //power = std::abs(energy - prevEnergy) / 65359.47712; // Division factor because the MSR reports energy in 15.3 joule increments.
-    power = 0;
 }
 
 void CpuMonitor::detectPackages()
@@ -158,9 +170,6 @@ void CpuMonitor::detectPackages()
         packageMap.push_back(-1);
     }
 
-    // Debug:
-    std::cout << "\t";
-
     for(i = 0; i < MAX_CPUS; i++) // For all cpu cores
     {
         // Set filename to the current cpu core's physical_package_id file.
@@ -171,10 +180,6 @@ void CpuMonitor::detectPackages()
         if(fff == NULL) break;
 
         fscanf(fff, "%d", &package);
-        // Debug:
-        std::cout << i << "(" << package << ")";
-        if (i % 8 == 7) std::cout << "\n\t";
-        else std::cout << ", ";
         fclose(fff);
 
         if(packageMap.at(package) == -1)
@@ -184,13 +189,75 @@ void CpuMonitor::detectPackages()
         }
     }
 
-    // Debug:
-    std::cout << "\n";
-
     totalCores = i;
+}
 
-    // Debug:
-    std::cout << "\tDetected " << totalCores << " cores in " << totalPackages << " packages\n" << std::endl;
+// TODO: Remove call to exit()
+long long CpuMonitor::readMsr(int core, unsigned int reg)
+{
+    uint64_t data;
+    int fd;
+    char msrFilename[255];
+
+    sprintf(msrFilename, "/dev/cpu/%d/msr", core);
+
+    fd = open(msrFilename, O_RDONLY);
+
+    if (fd < 0)
+    {
+        if (errno == ENXIO)
+        {
+            std::cerr <<"readMsr: No CPU" << core << std::endl;
+            exit(2);
+        }
+        else if (errno == EIO)
+        {
+            std::cerr << "readMsr: CPU " << core << " doesn't support MSRs" << std::endl;
+            exit(3);
+        }
+        else
+        {
+            perror("readMsr: open");
+            exit(127);
+        }
+    }
+
+    if (pread(fd, &data, sizeof data, reg) != sizeof data)
+    {
+        if (errno == EIO)
+        {
+            std::cerr << "readMsr: CPU " << core << " cannot read MSR " << reg << std::endl;
+            exit(4);
+        } else {
+            perror("readMsr: pread");
+            exit(127);
+        }
+    }
+
+    close(fd);
+
+    return (long long) data;
+}
+
+void CpuMonitor::updateEnergy()
+{
+    timePointPrevious = timePointCurrent;
+    timePointCurrent = std::chrono::steady_clock::now();
+
+    for(int i = 0; i < totalCores / 2; i++)
+    {
+        power = 0;
+        coreEnergyPrevious.at(i) = coreEnergy.at(i);
+        int coreEnergyRaw = readMsr(i, AMD_MSR_CORE_ENERGY);
+        coreEnergy.at(i) = coreEnergyRaw * energyUnitAdjusted;
+    }
+
+    for(int i = 0; i <totalPackages; i++)
+    {
+        packageEnergyPrevious.at(i) = packageEnergy.at(i);
+        int packageEnergyRaw = readMsr(i, AMD_MSR_PACKAGE_ENERGY);
+        packageEnergy.at(i) = packageEnergyRaw * energyUnitAdjusted;
+    }
 }
 
 // For debugging purposes

@@ -90,14 +90,14 @@ void GpuMonitor::update()
     }
 
     { // VRAM
-        nvmlBAR1Memory_t bar1;
+        nvmlMemory_t bar1;
 
-        nvmlReturn = nvmlDeviceGetBAR1MemoryInfo(device, &bar1);
+        nvmlReturn = nvmlDeviceGetMemoryInfo(device, &bar1);
 
         if(nvmlReturn == NVML_SUCCESS) {
-            totalVRAM = (double)bar1.bar1Total / VRAMDivisionFactor; // TODO: That outputs 64 GB for some reason.
-            usedVRAM = (double)bar1.bar1Used / VRAMDivisionFactor;
-            freeVRAM = (double)bar1.bar1Free / VRAMDivisionFactor;
+            totalVRAM = (double)bar1.total / VRAMDivisionFactor;
+            usedVRAM = (double)bar1.used / VRAMDivisionFactor;
+            freeVRAM = (double)bar1.free / VRAMDivisionFactor;
         }
     }
 }

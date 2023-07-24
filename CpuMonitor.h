@@ -19,7 +19,8 @@ namespace Cesame
 
 class CpuMonitor {
 private:
-    std::chrono::time_point<std::chrono::steady_clock> currentTimePoint;
+    std::chrono::time_point<std::chrono::steady_clock> timePointCurrent;
+    std::chrono::time_point<std::chrono::steady_clock> timePointPrevious;
     std::chrono::duration<double> deltaTime;
 
     // File streams
@@ -49,8 +50,24 @@ private: // MSR / RAPL
     int totalCores = 0;
     int totalPackages = 0;
     std::vector<int> packageMap;
+    int coreEnergyUnits;
+
+    unsigned int timeUnit;
+    unsigned int energyUnit;
+    unsigned int powerUnit;
+    double timeUnitAdjusted;
+    double energyUnitAdjusted;
+    double powerUnitAdjusted;
+
+    std::vector<double> coreEnergy;
+    std::vector<double> coreEnergyPrevious;
+
+    std::vector<double> packageEnergy;
+    std::vector<double> packageEnergyPrevious;
 
     void detectPackages();
+    long long readMsr(int core, unsigned int reg);
+    void updateEnergy();
 
 private:
     void printFields(); // For debug purposes.
