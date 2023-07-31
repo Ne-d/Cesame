@@ -7,24 +7,22 @@ using namespace Cesame;
 CesameWindow::CesameWindow(QWidget *parent)
     : QWidget{parent}
 {
-    cpuMon = new CpuMonitor();
-    memoryMon = new MemoryMonitor();
-    gpuMon = new GpuMonitor(0);
-    networkMon = new NetworkMonitor();
+    mon = new Monitor();
 
     timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, QOverload<>::of(&CesameWindow::update));
     // What in the world even is this syntax? Anyway it makes sure the window updates every frameTime;
+    connect(timer, &QTimer::timeout, this, QOverload<>::of(&CesameWindow::update));
 
     timer->start(frameTime);
 
+    // Hacky workaround to get a translucent dark background, not just transparent
     background = new QWidget(this);
     background->lower();
     background->setFixedSize(this->size());
 
     setStyleSheet("background-color: rgba(14, 16, 24, 128);");
     setAttribute(Qt::WA_TranslucentBackground, true);
-    setAttribute(Qt::WA_TintedBackground, true);
+    setAttribute(Qt::WA_TintedBackground, true); // TODO: Look into that, probably does nothing.
     setAttribute(Qt::WA_StyledBackground, true);
 
     update();
@@ -32,10 +30,7 @@ CesameWindow::CesameWindow(QWidget *parent)
 
 void CesameWindow::update()
 {
-    cpuMon->update();
-    memoryMon->update();
-    gpuMon->update();
-    networkMon->update();
+    mon->update();
 }
 
 void CesameWindow::resizeEvent(QResizeEvent *event)

@@ -5,6 +5,8 @@
 #include <vector>
 #include <chrono>
 
+#include "MonitorTypes.h"
+
 #define AMD_MSR_PWR_UNIT 0xC0010299
 #define AMD_MSR_CORE_ENERGY 0xC001029A
 #define AMD_MSR_PACKAGE_ENERGY 0xC001029B
@@ -18,6 +20,31 @@ namespace Cesame
 {
 
 class CpuMonitor {
+
+public: // Methods
+    CpuMonitor();
+
+    void update();
+
+    double getUsageAverage(MonitorUnit unit);
+    double getUsageCore(MonitorUnit unit, int core);
+    double getTemperaturePackage(MonitorUnit unit);
+    double getTemperatureCore(MonitorUnit unit, int core);
+    double getPowerPackage(MonitorUnit unit);
+    double getPowerCore(MonitorUnit unit, int core);
+    double getClockAverage(MonitorUnit unit);
+    double getClockCore(MonitorUnit unit, int core);
+
+
+private: // Variables to store monitoring data
+    unsigned int coreCount;
+
+    std::vector<double> usagePerCore;
+    double temp = 0;
+    double power = 0;
+    std::vector<double> clockSpeeds;
+
+
 private:
     std::chrono::time_point<std::chrono::steady_clock> timePointCurrent;
     std::chrono::time_point<std::chrono::steady_clock> timePointPrevious;
@@ -32,7 +59,7 @@ private:
     std::ifstream infoStream;
     std::ifstream tempStream;
 
-    // CPU Load
+    // Raw Data from /proc/stat
     std::vector<std::vector<int>> fields;
 
     std::vector<int> totalTime;
@@ -41,6 +68,7 @@ private:
     std::vector<int> activeTime;
     std::vector<int> prevActiveTime;
 
+    // Power Draw
     double energy = 0;
     double prevEnergy = 0;
 
@@ -71,16 +99,6 @@ private: // MSR / RAPL
 
 private:
     void printFields(); // For debug purposes.
-
-public:
-    CpuMonitor();
-    void update();
-    unsigned int coreCount;
-
-    std::vector<double> usagePerCore;
-    double temp = 0;
-    double power = 0;
-    std::vector<double> clockSpeeds;
 };
 
 }

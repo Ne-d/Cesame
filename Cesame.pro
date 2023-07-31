@@ -21,6 +21,7 @@ SOURCES += \
         Label.cpp \
         LineGraph.cpp \
         MemoryMonitor.cpp \
+        Monitor.cpp \
         NetworkMonitor.cpp \
         Utils.cpp \
         main.cpp
@@ -36,6 +37,7 @@ HEADERS += \
 	LineGraph.h \
 	MemoryMonitor.h \
 	Monitor.h \
+	MonitorTypes.h \
 	NetworkMonitor.h \
 	Utils.h
 

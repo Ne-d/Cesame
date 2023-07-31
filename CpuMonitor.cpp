@@ -10,7 +10,6 @@
 #include <fcntl.h>
 
 #include "CpuMonitor.h"
-#include "Utils.h"
 
 using namespace Cesame;
 
@@ -36,7 +35,7 @@ CpuMonitor::CpuMonitor() {
 
     std::string line;
     // Preparation of data vectors (arrays).
-    coreCount = 16; // TODO: Read the "siblings" value from infoFile to adapt to any CPU
+    coreCount = 16; // TODO: Read the "siblings" value from infoFile to adapt to any CPU, or smth else idk man
 
     fields.resize(coreCount + 1);
     totalTime.resize(coreCount + 1, 0);
@@ -154,6 +153,17 @@ void CpuMonitor::update() {
     for(unsigned int i = 0; i <= coreCount; i++) {
         usagePerCore.at(i) = (((double)activeTime.at(i) - (double)prevActiveTime.at(i)) /
                 ((double)totalTime.at(i) - (double)prevTotalTime.at(i))) * 100.0;
+    }
+}
+
+double CpuMonitor::getUsageAverage(MonitorUnit unit)
+{
+    switch(unit)
+    {
+    case None: return usagePerCore.at(0) * 100;
+    case Percent: return usagePerCore.at(0); // TODO: Gotta keep'em separated.
+    default:
+        throw IncorrectUnitException();
     }
 }
 
