@@ -37,8 +37,6 @@ private:
     QList<Cesame::BarGraph*> barGraphList;
 
     QColor color;
-
-    Cesame::CpuMonitor* cpuMon;
 };
 
 }

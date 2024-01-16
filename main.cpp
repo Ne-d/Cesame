@@ -2,17 +2,19 @@
 
 // Standard library
 #include <iostream>
-#include <fmt/core.h>
 
 // Qt
 #include <QApplication>
 #include <QtWidgets>
 
-// Custom Widgets
+// Project files
 #include "CesameWindow.h"
-#include "Label.h"
-#include "LineGraph.h"
 #include "CpuCoreGraph.h"
+#include "LineGraph.h"
+#include "MetricsManager.h"
+#include "MonitorTypes.h"
+
+#include <boost/interprocess/mapped_region.hpp>
 
 using namespace Cesame;
 
@@ -43,29 +45,33 @@ void setupLayouts(CesameWindow* window)
     cpuUsageSettings.maxValue = 100;
     cpuUsageSettings.alarmValue = 90;
     cpuUsageSettings.criticalValue = 95;
-    LineGraphText *cpuUsageLineGraph = new LineGraphText(window, &(window->cpuMon->usagePerCore.at(0)), cpuUsageSettings);
-    *cpuUsageLineGraph->label << "CPU usage: " << &window->cpuMon->usagePerCore.at(0) << "%";
+    MetricDefinition cpuUsageDef = mDef(CPUUsageAverage, Percent, 0);
+    LineGraphText *cpuUsageLineGraph = new LineGraphText(window, cpuUsageDef, cpuUsageSettings);
+    *cpuUsageLineGraph->label << "CPU usage: " << cpuUsageDef << "%";
 
     LineGraphSettings cpuTempSettings;
     cpuTempSettings.maxValue = 105;
     cpuTempSettings.alarmValue = 95;
     cpuTempSettings.criticalValue = 100;
-    LineGraphText *cpuTempLineGraph = new LineGraphText(window, &(window->cpuMon->temp), cpuTempSettings);
-    *cpuTempLineGraph->label << "CPU temperature: " << &(window->cpuMon->temp) << "°C";
+    MetricDefinition cpuTempDef = mDef(CPUTemperaturePackage, Celsius, 0);
+    LineGraphText *cpuTempLineGraph = new LineGraphText(window, cpuTempDef, cpuTempSettings);
+    *cpuTempLineGraph->label << "CPU temperature: " << cpuTempDef << "°C";
 
     LineGraphSettings cpuPowerSettings;
     cpuPowerSettings.maxValue = 70;
     cpuPowerSettings.alarmValue = 40;
     cpuPowerSettings.criticalValue = 50;
-    LineGraphText *cpuPowerLineGraph = new LineGraphText(window, &(window->cpuMon->power), cpuPowerSettings);
-    *cpuPowerLineGraph->label << "CPU power: " << &(window->cpuMon->power) << " W";
+    MetricDefinition cpuPowerDef = mDef(CPUPowerPackage, Watt, 0);
+    LineGraphText *cpuPowerLineGraph = new LineGraphText(window, cpuPowerDef, cpuPowerSettings);
+    *cpuPowerLineGraph->label << "CPU power: " << cpuPowerDef << " W";
 
     LineGraphSettings cpuClockSettings;
     cpuClockSettings.maxValue = 5000;
     cpuClockSettings.alarmValue = 4000;
     cpuClockSettings.criticalValue = 4500;
-    LineGraphText *cpuClockLineGraph = new LineGraphText(window, &(window->cpuMon->clockSpeeds.at(0)), cpuClockSettings);
-    *cpuClockLineGraph->label << "CPU Clock: " << &(window->cpuMon->clockSpeeds.at(0)) << " MHz"; // TODO: Should be an average of all cores.
+    MetricDefinition cpuClockDef = mDef(Cesame::CPUClockAverage, Megahertz, 0);
+    LineGraphText *cpuClockLineGraph = new LineGraphText(window, cpuClockDef, cpuClockSettings);
+    *cpuClockLineGraph->label << "CPU Clock: " << cpuClockDef << " MHz"; // TODO: Should be an average of all cores.
 
     ColorList cpuCoreColorList;
     cpuCoreColorList << ColorRange(0, 85, CESAME_COLOR_DEFAULT)
@@ -73,10 +79,11 @@ void setupLayouts(CesameWindow* window)
                      << ColorRange(95, 100, CESAME_COLOR_CRITICAL);
     CpuCoreGraph* cpuCoreGraph = new CpuCoreGraph(window, cpuCoreColorList);
 
-    cpuLayout->addLayout(cpuUsageLineGraph);
-    cpuLayout->addLayout(cpuTempLineGraph);
-    cpuLayout->addLayout(cpuPowerLineGraph);
-    cpuLayout->addLayout(cpuClockLineGraph);
+
+    cpuLayout->addWidget(cpuUsageLineGraph);
+    cpuLayout->addWidget(cpuTempLineGraph);
+    cpuLayout->addWidget(cpuPowerLineGraph);
+    cpuLayout->addWidget(cpuClockLineGraph);
     cpuLayout->addWidget(cpuCoreGraph);
 
     // GPU Graphs
@@ -85,72 +92,77 @@ void setupLayouts(CesameWindow* window)
     gpuUsageSettings.maxValue = 100;
     gpuUsageSettings.alarmValue = 95;
     gpuUsageSettings.criticalValue = 98;
-    LineGraphText *gpuUsageLineGraph = new LineGraphText(window, &(window->gpuMon->usage), gpuUsageSettings);
-    *gpuUsageLineGraph->label << "GPU Usage: " << &(window->gpuMon->usage) << "%";
+    MetricDefinition gpuUsageDef = mDef(GPUUsage, Percent, 0);
+    LineGraphText *gpuUsageLineGraph = new LineGraphText(window, gpuUsageDef, gpuUsageSettings);
+    *gpuUsageLineGraph->label << "GPU Usage: " << gpuUsageDef << "%";
 
     LineGraphSettings gpuTempSettings;
     gpuTempSettings.maxValue = 90;
     gpuTempSettings.alarmValue = 80;
     gpuTempSettings.criticalValue = 85;
-    LineGraphText *gpuTempLineGraph = new LineGraphText(window, &(window->gpuMon->temperature), gpuTempSettings);
-    *gpuTempLineGraph->label << "GPU Temperature: " << &(window->gpuMon->temperature) << "°C";
+    MetricDefinition gpuTempDef = mDef(GPUTemperature, Celsius, 0);
+    LineGraphText *gpuTempLineGraph = new LineGraphText(window, gpuTempDef, gpuTempSettings);
+    *gpuTempLineGraph->label << "GPU Temperature: " << gpuTempDef << "°C";
 
     LineGraphSettings gpuPowerSettings;
     gpuPowerSettings.maxValue = 150;
     gpuPowerSettings.alarmValue = 120;
     gpuPowerSettings.criticalValue = 130;
-    LineGraphText *gpuPowerLineGraph = new LineGraphText(window, &(window->gpuMon->power), gpuPowerSettings);
-    *gpuPowerLineGraph->label << "GPU Power: " << &(window->gpuMon->power) << " W";
+    MetricDefinition gpuPowerDef = mDef(GPUPower, Watt, 0);
+    LineGraphText *gpuPowerLineGraph = new LineGraphText(window, gpuPowerDef, gpuPowerSettings);
+    *gpuPowerLineGraph->label << "GPU Power: " << gpuPowerDef << " W";
 
     LineGraphSettings gpuClockSettings;
     gpuClockSettings.maxValue = 5000;
     gpuClockSettings.alarmValue = 4000;
     gpuClockSettings.criticalValue = 4500;
-    LineGraphText *gpuClockLineGraph = new LineGraphText(window, &(window->gpuMon->clockSpeed), gpuClockSettings);
-    *gpuClockLineGraph->label << "GPU Clock: " << &(window->gpuMon->clockSpeed) << " MHz";
+    MetricDefinition gpuClockDef = mDef(GPUClock, Megahertz, 0);
+    LineGraphText *gpuClockLineGraph = new LineGraphText(window, gpuClockDef, gpuClockSettings);
+    *gpuClockLineGraph->label << "GPU Clock: " << gpuClockDef << " MHz";
+
 
     LineGraphSettings vramUsageSettings;
-    vramUsageSettings.maxValue = window->gpuMon->totalVRAM;
+    vramUsageSettings.maxValue = std::get<double>(MetricsManager::getMetric(VRAMTotal, Gigabyte, 0));
     vramUsageSettings.alarmValue = 6;
     vramUsageSettings.criticalValue = 7;
-    LineGraphText *vramUsageLineGraph = new LineGraphText(window, &(window->gpuMon->usedVRAM), vramUsageSettings);
-    *vramUsageLineGraph->label << "VRAM Usage: " << &(window->gpuMon->usedVRAM) << " GB";
+    MetricDefinition vramUsageDef = mDef(VRAMUsed, Gigabyte, 0);
+    LineGraphText *vramUsageLineGraph = new LineGraphText(window, vramUsageDef, vramUsageSettings);
+    *vramUsageLineGraph->label << "VRAM Usage: " << vramUsageDef << " GB";
 
-    gpuLayout->addLayout(gpuUsageLineGraph);
-    gpuLayout->addLayout(gpuTempLineGraph);
-    gpuLayout->addLayout(gpuPowerLineGraph);
-    gpuLayout->addLayout(gpuClockLineGraph);
-    gpuLayout->addLayout(vramUsageLineGraph);
+
+    gpuLayout->addWidget(gpuUsageLineGraph);
+    gpuLayout->addWidget(gpuTempLineGraph);
+    gpuLayout->addWidget(gpuPowerLineGraph);
+    gpuLayout->addWidget(gpuClockLineGraph);
+    gpuLayout->addWidget(vramUsageLineGraph);
 
     // Side Graphs
-
+    /*
+    // TODO: This crashes the program and puts the IPC communication or the server into a bad state.
     LineGraphSettings ramUsageSettings;
-    ramUsageSettings.maxValue = window->memoryMon->totalMemoryGb;
+    ramUsageSettings.maxValue = std::get<double>(MetricsManager::getMetric(RAMTotal, Gigabyte, 0));
     ramUsageSettings.alarmValue = 24;
     ramUsageSettings.criticalValue = 30;
-    LineGraphText *ramUsageLineGraph = new LineGraphText(window, &(window->memoryMon->usedMemoryGb), ramUsageSettings);
-    *ramUsageLineGraph->label << "RAM Usage: " << &(window->memoryMon->usedMemoryGb) << " GB";
+    MetricDefinition ramUsageDef = mDef(Cesame::RAMUsed, Gigabyte, 0);
+    LineGraphText *ramUsageLineGraph = new LineGraphText(window, ramUsageDef, ramUsageSettings);
+    *ramUsageLineGraph->label << "RAM Usage: " << ramUsageDef << " GB";
 
-    LineGraphSettings pingSettings;
-    pingSettings.maxValue = 100;
-    pingSettings.alarmValue = 50;
-    pingSettings.criticalValue = 100;
-    LineGraphText *pingLineGraph = new LineGraphText(window, &(window->networkMon->ping), pingSettings);
-    *pingLineGraph->label << "Router ping: " << &(window->networkMon->ping) << " ms" << ", chokes: " << &(window->networkMon->lossCounter);
+    sideLayout->addWidget(ramUsageLineGraph);
+*/
 
-    sideLayout->addLayout(ramUsageLineGraph);
-    sideLayout->addLayout(pingLineGraph);
 }
+
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
     CesameWindow *window = new CesameWindow(nullptr);
 
-    window->setWindowTitle(QApplication::translate("windowTitle", "Cesame"));
-    window->show();
+    MetricsManager::init();
 
+    window->setWindowTitle(QApplication::translate("windowTitle", "Cesame"));
     setupLayouts(window);
+    window->show();
 
     return app.exec();
 }

@@ -5,30 +5,22 @@
 #include <QWidget>
 #include "qtimer.h"
 
-// Cesame monitoring includes
-#include "CpuMonitor.h"
-#include "MemoryMonitor.h"
-#include "GpuMonitor.h"
-#include "NetworkMonitor.h"
+#include "Monitor.h"
+
+// Socket Test
+#include "qtcpsocket.h"
 
 class CesameWindow : public QWidget
 {
     Q_OBJECT
 public:
     explicit CesameWindow(QWidget *parent = nullptr);
-
-    Cesame::CpuMonitor *cpuMon;
-    Cesame::MemoryMonitor *memoryMon;
-    Cesame::GpuMonitor *gpuMon;
-    Cesame::NetworkMonitor *networkMon;
-
     QTimer *timer;
 
-public slots:
-    void update();
-    void resizeEvent(QResizeEvent *event) override;
+    Cesame::Monitor *mon;
 
-signals:
+  public slots:
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     QWidget *background;

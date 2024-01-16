@@ -1,9 +1,15 @@
+// Standard library
+#include <iostream>
+
+// Qt
+#include <QPainter>
+
+// Project files
+#include "MetricsManager.h"
 #include "Label.h"
 #include "Utils.h"
 #include "Color.h"
 
-#include "qpainter.h"
-#include <iostream>
 
 using namespace Cesame;
 
@@ -43,13 +49,19 @@ void Label::updateDisplayString()
     for(int i = 0; i < textList.size(); i++)
     {
         LabelTextCell currentCell = textList.at(i);
-        if(std::holds_alternative<double*>(currentCell))
-        {
-            displayString.append(formatDouble(*std::get<double*>(currentCell)));
-        }
-        else if(std::holds_alternative<int*>(currentCell))
-        {
-            displayString.append(QString::number(*std::get<int*>(currentCell)));
+        if(std::holds_alternative<MetricDefinition>(currentCell)) {
+            MetricDefinition def = std::get<MetricDefinition>(currentCell);
+            Metric metric = MetricsManager::getMetric(def.metric, def.unit, def.index);
+            double value = -1;
+
+            if(std::holds_alternative<double>(metric)) {
+                value = std::get<double>(metric);
+            }
+            else if(std::holds_alternative<int>(metric)) {
+                value = static_cast<double>(std::get<int>(metric));
+            }
+
+            displayString.append(formatDouble(value));
         }
         else if(std::holds_alternative<QString>(currentCell))
         {

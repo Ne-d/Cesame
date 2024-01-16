@@ -1,14 +1,20 @@
 #ifndef LABEL_H
 #define LABEL_H
 
-#include <QWidget>
-#include <CesameWindow.h>
+// Standard Library
 #include <variant>
+
+// Qt
+#include <QWidget>
+
+// Project files
+#include "CesameWindow.h"
+#include "MetricsManager.h"
 
 namespace Cesame
 {
 
-typedef std::variant<double*, int*, QString> LabelTextCell;
+typedef std::variant<MetricDefinition, QString> LabelTextCell;
 
 class Label : public QWidget
 {
@@ -22,9 +28,6 @@ public:
 
 protected:
     QString displayString;
-
-
-signals:
 
 };
 

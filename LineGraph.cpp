@@ -1,17 +1,26 @@
+// Standard library
+#include <iostream>
+#include <variant>
+
+// Qt
+#include <QPainter>
+
+// Project files
 #include "LineGraph.h"
 #include "CesameWindow.h"
-#include "qpainter.h"
 #include "Utils.h"
-#include <iostream>
+#include "MetricsManager.h"
 
 using namespace Cesame;
 
-LineGraph::LineGraph(CesameWindow* parent, double* inValue, LineGraphSettings settings)
+LineGraph::LineGraph(CesameWindow* parent, MetricDefinition definition, LineGraphSettings settings)
 {
     // Setting up the automatic refresh based on the parent CesameWindow's timer.
     connect(parent->timer, &QTimer::timeout, this, QOverload<>::of(&LineGraph::updateData));
 
-    value = inValue;
+    metric = definition.metric;
+    unit = definition.unit;
+    metricIndex = definition.index;
 
     tableLength = settings.tableLength;
 
@@ -20,6 +29,8 @@ LineGraph::LineGraph(CesameWindow* parent, double* inValue, LineGraphSettings se
     criticalValue = settings.criticalValue;
 }
 
+// This is extremely old code with negative amounts of documentation.
+// If it ain't broke don't fix it but I'll have to optimize it at some point.
 void LineGraph::paintEvent(QPaintEvent *event) {
 
     QPainter painter;
@@ -100,7 +111,20 @@ void LineGraph::paintEvent(QPaintEvent *event) {
 
 void LineGraph::updateData()
 {
-    updateTable(*value);
+    Metric m = MetricsManager::getMetric(metric, unit, metricIndex);
+    double value;
+
+    if(std::holds_alternative<int>(m)) {
+        value = static_cast<double>(std::get<int>(m));
+    }
+    else if(std::holds_alternative<double>(m)){
+        value = std::get<double>(m);
+    }
+    else {
+        throw new IncorrectMetricTypeException();
+    }
+
+    updateTable(value);
     this->update();
 }
 
@@ -111,13 +135,16 @@ void LineGraph::updateTable(double value) {
     }
 }
 
-LineGraphText::LineGraphText(CesameWindow *parent, double *inValue, LineGraphSettings lineGraphSettings)
-{
-    lineGraph = new LineGraph(parent, inValue, lineGraphSettings);
+LineGraphText::LineGraphText(CesameWindow* parent, MetricDefinition definition, LineGraphSettings settings) {
+    lineGraph = new LineGraph(parent, definition, settings);
     label = new Label(parent);
 
-    addWidget(lineGraph);
-    addWidget(label);
+    layout = new QVBoxLayout(parent);
 
-    setSpacing(0);
+    setLayout(layout);
+
+    layout->addWidget(lineGraph);
+    layout->addWidget(label);
+
+    layout->setSpacing(15);
 }
