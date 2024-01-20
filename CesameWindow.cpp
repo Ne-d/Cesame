@@ -4,15 +4,13 @@
 
 #include <qtimer.h>
 
-#include <QIODevice>
-#include <QMessageBox>
-#include <QTcpSocket>
-
 // Socket Test
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+
+#include "common.h"
 
 using namespace Cesame;
 
@@ -36,12 +34,13 @@ CesameWindow::CesameWindow(QWidget *parent)
     int res = ::connect(sockfd, (struct sockaddr*) &address, sizeof(address));
     assert(res != -1);
 
-    std::cout << "Reading." << std::endl;
-    char buffer[1024];
-    res = read(sockfd, &buffer, sizeof(buffer));
-    assert(res > 0);
+    MonitorPacket buffer;
+    while(true) {
+        res = read(sockfd, &buffer, sizeof(MonitorPacket));
+        assert(res > 0);
 
-    std::cout << buffer << std::endl;
+        std::cout << "Data: " << buffer.CPUUsageAverage << std::endl;
+    }
 
     ::close(sockfd);
     // End socket stuff
