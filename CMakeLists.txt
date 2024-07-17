@@ -6,7 +6,6 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-
 find_package(Qt6 COMPONENTS
         Core
         Gui
@@ -14,6 +13,11 @@ find_package(Qt6 COMPONENTS
         REQUIRED)
 
 add_executable(Cesame src/Client/main.cpp)
+
+target_include_directories(Cesame PRIVATE
+        dependencies/
+)
+
 target_link_libraries(Cesame
         Qt::Core
         Qt::Gui
