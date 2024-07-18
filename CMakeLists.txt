@@ -12,7 +12,8 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(Cesame src/Client/main.cpp)
+add_executable(Cesame src/Client/main.cpp
+        src/Client/TimeManager.cpp)
 
 target_include_directories(Cesame PRIVATE
         dependencies/

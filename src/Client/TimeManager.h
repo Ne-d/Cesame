@@ -28,11 +28,6 @@ public: //Methods
 
     static std::chrono::time_point<std::chrono::steady_clock> getCurrentTimePoint();
 };
-
-/**
- * A global instance of TimeManager which all "normal" widgets (that update every second) will connect to.
- */
-static TimeManager globalTimeManager(std::chrono::milliseconds(1000));
 }
 
 #endif //TIMEMANAGER_H
