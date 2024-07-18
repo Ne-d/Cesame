@@ -10,6 +10,7 @@
     <inspection_tool class="CppEnforceTypeAliasCodeStyle" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="CppEnforceWhileStatementBraces" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="CppInconsistentNaming" enabled="true" level="HINT" enabled_by_default="true" />
+    <inspection_tool class="CppRedundantAccessSpecifier" enabled="false" level="HINT" enabled_by_default="false" />
     <inspection_tool class="CppRemoveRedundantBraces" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="CppTabsAreDisallowed" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="CppUseAuto" enabled="false" level="HINT" enabled_by_default="false" />

@@ -39,17 +39,7 @@
       <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/LINE_BREAK_AFTER_DEREF_IN_TRAILING_RETURN_TYPES/@EntryValue" value="ON_SINGLE_LINE" type="string" />
       <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/LINE_BREAK_AFTER_COMMA_IN_MEMBER_INITIALIZER_LISTS/@EntryValue" value="true" type="bool" />
       <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/NAMESPACE_INDENTATION/@EntryValue" value="Inner" type="string" />
-      <option name="/Default/CodeStyle/Naming/CppNaming/Rules/=Parameters/@EntryIndexRemoved" />
-      <option name="/Default/CodeStyle/Naming/CppNaming/Rules/=Local_0020variables/@EntryIndexRemoved" />
-      <option name="/Default/CodeStyle/Naming/CppNaming/Rules/=Global_0020variables/@EntryIndexRemoved" />
-      <option name="/Default/CodeStyle/Naming/CppNaming/Rules/=Global_0020functions/@EntryIndexRemoved" />
-      <option name="/Default/CodeStyle/Naming/CppNaming/Rules/=Class_0020and_0020struct_0020methods/@EntryIndexRemoved" />
-      <option name="/Default/CodeStyle/Naming/CppNaming/Rules/=Class_0020and_0020struct_0020fields/@EntryIndexRemoved" />
-      <option name="/Default/CodeStyle/Naming/CppNaming/Rules/=Class_0020and_0020struct_0020public_0020fields/@EntryIndexRemoved" />
-      <option name="/Default/CodeStyle/Naming/CppNaming/Rules/=Union_0020members/@EntryIndexRemoved" />
-      <option name="/Default/CodeStyle/Naming/CppNaming/Rules/=Enum_0020members/@EntryIndexRemoved" />
       <option name="/Default/CodeStyle/Naming/CppNaming/Rules/=Typedefs/@EntryIndexedValue" value="&lt;NamingElement Priority=&quot;18&quot;&gt;&lt;Descriptor Static=&quot;Indeterminate&quot; Constexpr=&quot;Indeterminate&quot; Const=&quot;Indeterminate&quot; Volatile=&quot;Indeterminate&quot; Accessibility=&quot;NOT_APPLICABLE&quot;&gt;&lt;type Name=&quot;type alias&quot; /&gt;&lt;type Name=&quot;typedef&quot; /&gt;&lt;/Descriptor&gt;&lt;Policy Inspect=&quot;True&quot; Prefix=&quot;&quot; Suffix=&quot;&quot; Style=&quot;AaBb_AaBb&quot; /&gt;&lt;/NamingElement&gt;" type="string" />
-      <option name="/Default/CodeStyle/Naming/CppNaming/Rules/=Typedefs/@EntryIndexRemoved" />
     </RiderCodeStyleSettings>
     <files>
       <extensions>
