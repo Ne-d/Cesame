@@ -23,19 +23,13 @@ CpuMonitor::CpuMonitor() {
     if (!infoStream.is_open())
         throw FileOpenException();
 
-    // Preparation of data arrays
     coreCount = 16; // TODO: Determine automatically.
 
-    fields.resize(coreCount + 1);
+    // Preparation of data arrays
     totalTime.resize(coreCount + 1);
     prevTotalTime.resize(coreCount + 1);
     activeTime.resize(coreCount + 1);
     prevActiveTime.resize(coreCount + 1);
-
-    // Resize all second-dimension vectors representing the fields of the stat file (because there are 10 fields per line).
-    for (std::vector<int> vector : fields) {
-        vector.resize(10, 0);
-    }
 }
 
 Quantity<Percent, double> CpuMonitor::usageRateAverage() {
@@ -52,13 +46,18 @@ Quantity<Celsius, double> CpuMonitor::temperatureAverage() { // NOLINT(*-convert
 }
 
 QuantityPoint<Celsius, double> CpuMonitor::temperaturePackage() {
+    // Seek to the beginning of the the temperature file.
     tempStream.seekg(0, std::ifstream::beg);
+
+    // Get the first (and only) line of the file.
     std::string tempBuffer;
     getline(tempStream, tempBuffer);
 
+    // Convert to a double and divide by 1000 because the values are written in thousandths of degrees celsius.
     return celsius_pt(std::stod(tempBuffer) / 1000);
 }
 
+#pragma region FuturePowerDrawMethods
 // ReSharper disable once CppMemberFunctionMayBeStatic
 Quantity<Celsius, double>
 CpuMonitor::temperaturePerCore(unsigned int core) { // NOLINT(*-convert-member-functions-to-static)
@@ -85,8 +84,53 @@ Quantity<Watts, double> CpuMonitor::powerDrawAverage() { // NOLINT(*-convert-mem
 Quantity<Watts, double> CpuMonitor::powerDrawPackage() { // NOLINT(*-convert-member-functions-to-static)
     throw NotImplementedException();
 }
+#pragma endregion
 
-au::Quantity<au::Mega<au::Hertz>, double> CpuMonitor::clockSpeedPerCore(unsigned int core) {}
+Quantity<Mega<Hertz>, double> CpuMonitor::clockSpeedPerCore(const unsigned int core) {
+    std::string line;
+    int lineNb = 0;
+
+    std::string clockString;
+
+    // Reset the file stream.
+    infoStream.clear();
+    infoStream.seekg(0, std::ifstream::beg);
+
+    // For each line of the info file.
+    while (getline(infoStream, line)) {
+        // If the line contains the clock speed of a core.
+        if (line.find("cpu MHz") != std::string::npos) {
+            // Remove the first few characters that come before the data.
+            // HACK: Magic number.
+            line.erase(0, 11);
+            lineNb++;
+
+            // If the current line is the one that represents the core we are looking for.
+            if (lineNb == core) {
+                const auto clockSpeed = mega(hertz)(std::stod(line));
+                return clockSpeed;
+            }
+        }
+    }
+
+    // If we exit the loop (reach the end of the file) without having found a value, yeet an exception.
+    throw ValueNotFoundException();
+}
+
+Quantity<Mega<Hertz>, double> CpuMonitor::clockSpeedAverage() {
+    // Yes, the complexity is horrible but I don't give a shit.
+    // If it ain't broke, don't fix it.
+    // Laugh at perfection. it's boring and keeps you from being done.
+    // Premature optimization is the root of all evil.
+
+    Quantity<Mega<Hertz>, double> sum;
+
+    for (unsigned int i = 0; i < coreCount; ++i) {
+        sum += clockSpeedPerCore(i + 1);
+    }
+
+    return sum / coreCount;
+}
 
 std::vector<int> CpuMonitor::getStatLine(const unsigned int lineNb) {
     std::string line;

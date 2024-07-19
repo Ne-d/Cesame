@@ -56,8 +56,6 @@ private: // Data / state
     const unsigned int fieldsPerLine = 10;
 
     // Raw Data from /proc/stat
-    std::vector<std::vector<int>> fields;
-
     std::vector<int> totalTime;
     std::vector<int> prevTotalTime;
 
@@ -68,6 +66,8 @@ private: // Data / state
 };
 
 class FileOpenException final : public std::exception {};
+
+class ValueNotFoundException final : public std::exception {};
 }
 
 #endif //CPUMONITOR_H

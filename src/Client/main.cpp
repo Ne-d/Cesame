@@ -1,11 +1,9 @@
 #include <QApplication>
-#include <QWindow>
 #include <au.hh>
 #include <iostream>
 #include <thread>
 
 #include "CpuMonitor.h"
-#include "MetricType.h"
 #include "Monitor.h"
 
 using namespace Cesame;
@@ -21,12 +19,13 @@ int main(int argc, char* argv[]) {
     CpuMonitor mon;
 
     while (true) {
-        Metric<Celsius, double> m = mon.temperaturePackage();
-        QuantityPoint<Celsius, double> v;
-        if (std::holds_alternative<QuantityPoint<Celsius, double>>(m))
-            v = std::get<QuantityPoint<Celsius, double>>(m);
+        Metric<Percent, double> m = mon.usageRateAverage();
 
-        std::cout << v << std::endl;
+        Quantity<Percent, double> q;
+        if (std::holds_alternative<Quantity<Percent, double>>(m))
+            q = std::get<Quantity<Percent, double>>(m);
+
+        std::cout << q << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 

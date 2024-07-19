@@ -12,7 +12,7 @@ public:
     static Metric<Unit, Rep> getMetric(const MetricType& type) {
         switch (type.getName()) {
             default:
-                throw new NotImplementedException;
+                throw NotImplementedException();
         }
     }
 };
