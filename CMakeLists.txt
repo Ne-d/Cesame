@@ -13,9 +13,17 @@ find_package(Qt6 COMPONENTS
         REQUIRED)
 
 add_executable(Cesame src/Client/main.cpp
-        src/Client/TimeManager.cpp)
+        src/Client/TimeManager.cpp
+        src/Client/Metrics/MetricType.cpp
+        src/Client/Monitors/CpuMonitor.cpp
+        src/Client/Monitors/CpuMonitor.h
+)
 
 target_include_directories(Cesame PRIVATE
+        src/
+        src/Client/
+        src/Client/Metrics
+        src/Client/Monitors
         dependencies/
 )
 

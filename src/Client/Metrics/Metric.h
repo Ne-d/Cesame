@@ -14,7 +14,7 @@ namespace Cesame {
  * @tparam Ref The underlying type representing the quantity (int, double, etc.).
  */
 template <typename Unit, typename Ref>
-using Metric = std::variant<au::Quantity<Unit, Ref>, std::string>;
+using Metric = std::variant<au::Quantity<Unit, Ref>, au::QuantityPoint<Unit, Ref>, std::string>;
 }
 
 #endif //METRIC_H
