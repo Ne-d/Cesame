@@ -6,14 +6,27 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-
 find_package(Qt6 COMPONENTS
         Core
         Gui
         Widgets
         REQUIRED)
 
-add_executable(Cesame src/Client/main.cpp)
+add_executable(Cesame src/Client/main.cpp
+        src/Client/TimeManager.cpp
+        src/Client/Metrics/MetricType.cpp
+        src/Client/Monitors/CpuMonitor.cpp
+        src/Client/Monitors/CpuMonitor.h
+)
+
+target_include_directories(Cesame PRIVATE
+        src/
+        src/Client/
+        src/Client/Metrics
+        src/Client/Monitors
+        dependencies/
+)
+
 target_link_libraries(Cesame
         Qt::Core
         Qt::Gui
