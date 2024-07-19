@@ -120,7 +120,7 @@ Quantity<Mega<Hertz>, double> CpuMonitor::clockSpeedPerCore(const unsigned int c
 Quantity<Mega<Hertz>, double> CpuMonitor::clockSpeedAverage() {
     // Yes, the complexity is horrible but I don't give a shit.
     // If it ain't broke, don't fix it.
-    // Laugh at perfection. it's boring and keeps you from being done.
+    // Laugh at perfection. It's boring and keeps you from being done.
     // Premature optimization is the root of all evil.
 
     Quantity<Mega<Hertz>, double> sum;
