@@ -137,11 +137,7 @@ std::vector<int> CpuMonitor::getStatLine(const unsigned int lineNb) {
     std::stringstream iss;
     std::string field;
 
-    // Go to the desired line.
-    statStream.seekg(0, std::ifstream::beg);
-    for (int i = 0; i < lineNb; ++i) {
-        statStream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    }
+    Monitor::goToLine(statStream, lineNb);
 
     // Store the contents of the line into the stringstream.
     int fieldNb = 0;

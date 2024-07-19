@@ -17,11 +17,14 @@ add_executable(Cesame src/Client/main.cpp
         src/Client/Metrics/MetricType.cpp
         src/Client/Monitors/CpuMonitor.cpp
         src/Client/Monitors/CpuMonitor.h
+        src/Client/Monitors/MemoryMonitor.cpp
+        src/Client/Monitors/MemoryMonitor.h
 )
 
 target_include_directories(Cesame PRIVATE
         src/
         src/Client/
+        src/Client/Exceptions
         src/Client/Metrics
         src/Client/Monitors
         dependencies/

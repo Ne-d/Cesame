@@ -4,6 +4,7 @@
 #include <thread>
 
 #include "CpuMonitor.h"
+#include "MemoryMonitor.h"
 #include "Monitor.h"
 
 using namespace Cesame;
@@ -16,14 +17,14 @@ int main(int argc, char* argv[]) {
     //QWindow window;
     //window.show();
 
-    CpuMonitor mon;
+    MemoryMonitor mon;
 
     while (true) {
-        Metric<Percent, double> m = mon.usageRateAverage();
+        Metric<Gibi<Bytes>, double> m = mon.used();
 
-        Quantity<Percent, double> q;
-        if (std::holds_alternative<Quantity<Percent, double>>(m))
-            q = std::get<Quantity<Percent, double>>(m);
+        Quantity<Gibi<Bytes>, double> q;
+        if (std::holds_alternative<Quantity<Gibi<Bytes>, double>>(m))
+            q = std::get<Quantity<Gibi<Bytes>, double>>(m);
 
         std::cout << q << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
