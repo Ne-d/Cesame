@@ -3,13 +3,26 @@
 #include <iostream>
 #include <thread>
 
-#include "CpuMonitor.h"
-#include "MemoryMonitor.h"
+#include "GpuMonitor.h"
 #include "Monitor.h"
 
 using namespace Cesame;
 using namespace au;
 using namespace au::symbols;
+
+template <typename Unit, typename Rep>
+void printMetric(Metric<Unit, Rep> metric) {
+    if (std::holds_alternative<Quantity<Unit, Rep>>(metric))
+        std::cout << std::get<Quantity<Unit, Rep>>(metric);
+
+    if (std::holds_alternative<QuantityPoint<Unit, Rep>>(metric))
+        std::cout << std::get<QuantityPoint<Unit, Rep>>(metric);
+
+    if (std::holds_alternative<std::string>(metric))
+        std::cout << std::get<std::string>(metric);
+
+    std::cout << std::endl;
+}
 
 int main(int argc, char* argv[]) {
     QApplication a(argc, argv);
@@ -17,16 +30,13 @@ int main(int argc, char* argv[]) {
     //QWindow window;
     //window.show();
 
-    MemoryMonitor mon;
+    GpuMonitor mon(0);
 
     while (true) {
-        Metric<Gibi<Bytes>, double> m = mon.used();
+        const Metric<Percent, int> m = mon.pState();
 
-        Quantity<Gibi<Bytes>, double> q;
-        if (std::holds_alternative<Quantity<Gibi<Bytes>, double>>(m))
-            q = std::get<Quantity<Gibi<Bytes>, double>>(m);
+        printMetric(m);
 
-        std::cout << q << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 

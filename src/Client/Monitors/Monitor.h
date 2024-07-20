@@ -1,6 +1,8 @@
 #ifndef MONITOR_H
 #define MONITOR_H
 
+#include <fstream>
+
 #include "Metric.h"
 #include "MetricType.h"
 #include "Exceptions.h"
