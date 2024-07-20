@@ -180,7 +180,7 @@ double CpuMonitor::getUsageRateLine(const unsigned int lineNb) {
     }
 
     // TODO: Make this one / two liner more clear cause I'm too lazy to do it now.
-    return ((static_cast<double>(activeTime.at(lineNb)) - static_cast<double>(prevActiveTime.at(lineNb))) /
-        (static_cast<double>(totalTime.at(lineNb)) - static_cast<double>(prevTotalTime.at(lineNb)))) * 100;
+    return (static_cast<double>(activeTime.at(lineNb)) - static_cast<double>(prevActiveTime.at(lineNb))) /
+        (static_cast<double>(totalTime.at(lineNb)) - static_cast<double>(prevTotalTime.at(lineNb))) * 100;
 }
 

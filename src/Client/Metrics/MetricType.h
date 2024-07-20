@@ -83,9 +83,9 @@ private:
 public:
     explicit MetricType(MetricName name, unsigned int coreIndex = 0, unsigned int monitorIndex = 0);
 
-    MetricName getName() const;
-    unsigned int getCoreIndex() const;
-    unsigned int getMonitorIndex() const;
+    [[nodiscard]] MetricName getName() const;
+    [[nodiscard]] unsigned int getCoreIndex() const;
+    [[nodiscard]] unsigned int getMonitorIndex() const;
 
     void setName(const MetricName& name);
     void setCoreIndex(const unsigned int& coreIndex);
