@@ -12,16 +12,22 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(Cesame src/Client/main.cpp
+find_package(GTest REQUIRED)
+
+find_package(CUDAToolkit REQUIRED)
+
+add_executable(Client src/Client/main.cpp
         src/Client/TimeManager.cpp
         src/Client/Metrics/MetricType.cpp
         src/Client/Monitors/CpuMonitor.cpp
         src/Client/Monitors/CpuMonitor.h
         src/Client/Monitors/MemoryMonitor.cpp
         src/Client/Monitors/MemoryMonitor.h
+        src/Client/Monitors/GpuMonitor.cpp
+        src/Client/Monitors/GpuMonitor.h
 )
 
-target_include_directories(Cesame PRIVATE
+target_include_directories(Client PRIVATE
         src/
         src/Client/
         src/Client/Exceptions
@@ -30,9 +36,30 @@ target_include_directories(Cesame PRIVATE
         dependencies/
 )
 
-target_link_libraries(Cesame
+target_link_libraries(Client
         Qt::Core
         Qt::Gui
         Qt::Widgets
+        CUDA::nvml
 )
 
+# Tests
+enable_testing()
+
+add_executable(Tests)
+
+target_include_directories(Tests PRIVATE
+        src/
+        src/Client/
+        src/Client/Exceptions
+        src/Client/Metrics
+        src/Client/Monitors
+        dependencies/
+)
+
+target_link_libraries(Tests
+        GTest::gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(Tests)
