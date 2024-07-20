@@ -120,7 +120,7 @@ Quantity<Mega<Hertz>, double> CpuMonitor::clockSpeedPerCore(const unsigned int c
 Quantity<Mega<Hertz>, double> CpuMonitor::clockSpeedAverage() {
     // Yes, the complexity is horrible but I don't give a shit.
     // If it ain't broke, don't fix it.
-    // Laugh at perfection. it's boring and keeps you from being done.
+    // Laugh at perfection. It's boring and keeps you from being done.
     // Premature optimization is the root of all evil.
 
     Quantity<Mega<Hertz>, double> sum;
@@ -137,11 +137,7 @@ std::vector<int> CpuMonitor::getStatLine(const unsigned int lineNb) {
     std::stringstream iss;
     std::string field;
 
-    // Go to the desired line.
-    statStream.seekg(0, std::ifstream::beg);
-    for (int i = 0; i < lineNb; ++i) {
-        statStream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    }
+    Monitor::goToLine(statStream, lineNb);
 
     // Store the contents of the line into the stringstream.
     int fieldNb = 0;
@@ -184,7 +180,7 @@ double CpuMonitor::getUsageRateLine(const unsigned int lineNb) {
     }
 
     // TODO: Make this one / two liner more clear cause I'm too lazy to do it now.
-    return ((static_cast<double>(activeTime.at(lineNb)) - static_cast<double>(prevActiveTime.at(lineNb))) /
-        (static_cast<double>(totalTime.at(lineNb)) - static_cast<double>(prevTotalTime.at(lineNb)))) * 100;
+    return (static_cast<double>(activeTime.at(lineNb)) - static_cast<double>(prevActiveTime.at(lineNb))) /
+        (static_cast<double>(totalTime.at(lineNb)) - static_cast<double>(prevTotalTime.at(lineNb))) * 100;
 }
 

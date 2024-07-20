@@ -64,10 +64,6 @@ private: // Data / state
 
     unsigned int coreCount;
 };
-
-class FileOpenException final : public std::exception {};
-
-class ValueNotFoundException final : public std::exception {};
 }
 
 #endif //CPUMONITOR_H
