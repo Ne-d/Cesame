@@ -1,10 +1,8 @@
-
 #ifndef CPUMONITOR_H
 #define CPUMONITOR_H
 
+#include <chrono>
 #include <fstream>
-
-#include "Monitor.h"
 
 namespace Cesame {
 class CpuMonitor {
@@ -12,20 +10,20 @@ public:
     CpuMonitor();
 
 public: // Metric getters
-    au::Quantity<au::Percent, double> usageRateAverage();
-    au::Quantity<au::Percent, double> usageRatePerCore(unsigned int core);
+    double usageRateAverage();
+    double usageRatePerCore(unsigned int core);
 
-    au::Quantity<au::Celsius, double> temperatureAverage();
-    au::QuantityPoint<au::Celsius, double> temperaturePackage();
-    au::Quantity<au::Celsius, double> temperaturePerCore(unsigned int core);
+    double temperatureAverage();
+    double temperaturePackage();
+    double temperaturePerCore(unsigned int core);
 
-    au::Quantity<au::Watts, double> powerDrawPerCore(unsigned int core);
-    au::Quantity<au::Watts, double> powerDrawSumOfCores();
-    au::Quantity<au::Watts, double> powerDrawAverage();
-    au::Quantity<au::Watts, double> powerDrawPackage();
+    double powerDrawPerCore(unsigned int core);
+    double powerDrawSumOfCores();
+    double powerDrawAverage();
+    double powerDrawPackage();
 
-    au::Quantity<au::Mega<au::Hertz>, double> clockSpeedPerCore(unsigned int core);
-    au::Quantity<au::Mega<au::Hertz>, double> clockSpeedAverage();
+    double clockSpeedPerCore(unsigned int core);
+    double clockSpeedAverage();
 
 private: // Helper methods
     /**

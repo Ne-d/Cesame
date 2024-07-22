@@ -28,6 +28,8 @@ public: //Methods
 
     static std::chrono::time_point<std::chrono::steady_clock> getCurrentTimePoint();
 };
+
+static TimeManager globalTimeManager(std::chrono::milliseconds(1000));
 }
 
 #endif //TIMEMANAGER_H

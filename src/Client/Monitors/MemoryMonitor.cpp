@@ -5,7 +5,6 @@
 #include "Monitor.h"
 
 using namespace Cesame;
-using namespace au;
 
 std::string MemoryMonitor::keepNumbers(const std::string& source) {
     std::string target;
@@ -17,14 +16,14 @@ std::string MemoryMonitor::keepNumbers(const std::string& source) {
     return target;
 }
 
-Quantity<Kibi<Bytes>, double> MemoryMonitor::getMeminfoLine(const unsigned int lineNb) {
+double MemoryMonitor::getMeminfoLine(const unsigned int lineNb) {
     std::string line;
 
     Monitor::goToLine(infoStream, lineNb);
     getline(infoStream, line);
     const std::string numberLine = keepNumbers(line);
 
-    return kibi(bytes)(std::stoi(numberLine));
+    return std::stoi(numberLine);
 }
 
 MemoryMonitor::MemoryMonitor() {
@@ -34,19 +33,19 @@ MemoryMonitor::MemoryMonitor() {
         throw FileOpenException();
 }
 
-Quantity<Gibi<Bytes>, double> MemoryMonitor::total() {
-    return getMeminfoLine(0).as(gibi(bytes));
+double MemoryMonitor::total() {
+    return getMeminfoLine(0) / kiB_to_GiB;
 }
 
-Quantity<Gibi<Bytes>, double> MemoryMonitor::free() {
-    return getMeminfoLine(1).as(gibi(bytes));
+double MemoryMonitor::free() {
+    return getMeminfoLine(1) / kiB_to_GiB;
 }
 
-Quantity<Gibi<Bytes>, double> MemoryMonitor::available() {
-    return getMeminfoLine(2).as(gibi(bytes));
+double MemoryMonitor::available() {
+    return getMeminfoLine(2) / kiB_to_GiB;
 }
 
-Quantity<Gibi<Bytes>, double> MemoryMonitor::used() {
-    const Quantity<Giga<Bytes>, double> memoryUsed = total() - available();
-    return memoryUsed.as(gibi(bytes));
+double MemoryMonitor::used() {
+    const double memoryUsed = total() - available();
+    return memoryUsed;
 }

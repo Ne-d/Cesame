@@ -1,10 +1,12 @@
 #include "CpuMonitor.h"
 
+#include <chrono>
 #include <iostream>
+
+#include "Monitor.h"
 
 using namespace Cesame;
 using namespace std::chrono;
-using namespace au;
 
 CpuMonitor::CpuMonitor() {
     // Initialize timings
@@ -32,20 +34,20 @@ CpuMonitor::CpuMonitor() {
     prevActiveTime.resize(coreCount + 1);
 }
 
-Quantity<Percent, double> CpuMonitor::usageRateAverage() {
-    return percent(getUsageRateLine(0));
+double CpuMonitor::usageRateAverage() {
+    return getUsageRateLine(0);
 }
 
-Quantity<Percent, double> CpuMonitor::usageRatePerCore(const unsigned int core) {
-    return percent(getUsageRateLine(core));
+double CpuMonitor::usageRatePerCore(const unsigned int core) {
+    return getUsageRateLine(core);
 }
 
 // ReSharper disable once CppMemberFunctionMayBeStatic
-Quantity<Celsius, double> CpuMonitor::temperatureAverage() { // NOLINT(*-convert-member-functions-to-static)
+double CpuMonitor::temperatureAverage() { // NOLINT(*-convert-member-functions-to-static)
     throw NotImplementedException();
 }
 
-QuantityPoint<Celsius, double> CpuMonitor::temperaturePackage() {
+double CpuMonitor::temperaturePackage() {
     // Seek to the beginning of the the temperature file.
     tempStream.seekg(0, std::ifstream::beg);
 
@@ -54,39 +56,37 @@ QuantityPoint<Celsius, double> CpuMonitor::temperaturePackage() {
     getline(tempStream, tempBuffer);
 
     // Convert to a double and divide by 1000 because the values are written in thousandths of degrees celsius.
-    return celsius_pt(std::stod(tempBuffer) / 1000);
+    return std::stod(tempBuffer) / 1000;
 }
 
 #pragma region FuturePowerDrawMethods
 // ReSharper disable once CppMemberFunctionMayBeStatic
-Quantity<Celsius, double>
-CpuMonitor::temperaturePerCore(unsigned int core) { // NOLINT(*-convert-member-functions-to-static)
+double CpuMonitor::temperaturePerCore(unsigned int core) { // NOLINT(*-convert-member-functions-to-static)
     throw NotImplementedException();
 }
 
 // ReSharper disable once CppMemberFunctionMayBeStatic
-Quantity<Watts, double>
-CpuMonitor::powerDrawPerCore(unsigned int core) { // NOLINT(*-convert-member-functions-to-static)
+double CpuMonitor::powerDrawPerCore(unsigned int core) { // NOLINT(*-convert-member-functions-to-static)
     throw NotImplementedException();
 }
 
 // ReSharper disable once CppMemberFunctionMayBeStatic
-Quantity<Watts, double> CpuMonitor::powerDrawSumOfCores() { // NOLINT(*-convert-member-functions-to-static)
+double CpuMonitor::powerDrawSumOfCores() { // NOLINT(*-convert-member-functions-to-static)
     throw NotImplementedException();
 }
 
 // ReSharper disable once CppMemberFunctionMayBeStatic
-Quantity<Watts, double> CpuMonitor::powerDrawAverage() { // NOLINT(*-convert-member-functions-to-static)
+double CpuMonitor::powerDrawAverage() { // NOLINT(*-convert-member-functions-to-static)
     throw NotImplementedException();
 }
 
 // ReSharper disable once CppMemberFunctionMayBeStatic
-Quantity<Watts, double> CpuMonitor::powerDrawPackage() { // NOLINT(*-convert-member-functions-to-static)
+double CpuMonitor::powerDrawPackage() { // NOLINT(*-convert-member-functions-to-static)
     throw NotImplementedException();
 }
 #pragma endregion
 
-Quantity<Mega<Hertz>, double> CpuMonitor::clockSpeedPerCore(const unsigned int core) {
+double CpuMonitor::clockSpeedPerCore(const unsigned int core) {
     std::string line;
     int lineNb = 0;
 
@@ -107,7 +107,7 @@ Quantity<Mega<Hertz>, double> CpuMonitor::clockSpeedPerCore(const unsigned int c
 
             // If the current line is the one that represents the core we are looking for.
             if (lineNb == core) {
-                const auto clockSpeed = mega(hertz)(std::stod(line));
+                const auto clockSpeed = std::stod(line);
                 return clockSpeed;
             }
         }
@@ -117,13 +117,13 @@ Quantity<Mega<Hertz>, double> CpuMonitor::clockSpeedPerCore(const unsigned int c
     throw ValueNotFoundException();
 }
 
-Quantity<Mega<Hertz>, double> CpuMonitor::clockSpeedAverage() {
+double CpuMonitor::clockSpeedAverage() {
     // Yes, the complexity is horrible but I don't give a shit.
     // If it ain't broke, don't fix it.
     // Laugh at perfection. It's boring and keeps you from being done.
     // Premature optimization is the root of all evil.
 
-    Quantity<Mega<Hertz>, double> sum;
+    double sum = 0;
 
     for (unsigned int i = 0; i < coreCount; ++i) {
         sum += clockSpeedPerCore(i + 1);

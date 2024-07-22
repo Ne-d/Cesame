@@ -1,7 +1,6 @@
 #include "GpuMonitor.h"
 
 using namespace Cesame;
-using namespace au;
 
 GpuMonitor::GpuMonitor(const unsigned int deviceIndex) {
     unsigned int deviceCount;
@@ -19,78 +18,80 @@ GpuMonitor::GpuMonitor(const unsigned int deviceIndex) {
     checkNvmlReturn(NvmlGetHandleException());
 }
 
-Quantity<Percent, unsigned int> GpuMonitor::utilization() {
+int GpuMonitor::utilization() {
     nvmlUtilization_t utilization;
     nvmlReturn = nvmlDeviceGetUtilizationRates(device, &utilization);
 
     checkNvmlReturn(QueryException());
-    return percent(utilization.gpu);
+    return static_cast<int>(utilization.gpu);
 }
 
-Quantity<Percent, unsigned int> GpuMonitor::memoryUtilization() {
+int GpuMonitor::memoryUtilization() {
     nvmlUtilization_t utilization;
     nvmlReturn = nvmlDeviceGetUtilizationRates(device, &utilization);
 
     checkNvmlReturn(QueryException());
-    return percent(utilization.memory);
+    return static_cast<int>(utilization.memory);
 }
 
-QuantityPoint<Celsius, unsigned int> GpuMonitor::temperature() {
+int GpuMonitor::temperature() {
     unsigned int temp;
     nvmlReturn = nvmlDeviceGetTemperature(device, NVML_TEMPERATURE_GPU, &temp);
 
     checkNvmlReturn(QueryException());
-    return celsius_pt(temp);
+    return static_cast<int>(temp);
 }
 
-Quantity<Watts, double> GpuMonitor::power() {
+double GpuMonitor::power() {
     unsigned int power;
     nvmlReturn = nvmlDeviceGetPowerUsage(device, &power);
 
     checkNvmlReturn(QueryException());
-    return milli(watts)(static_cast<double>(power)).as(watts);
+
+    // We divide by 1000 because NVML returns values in williwatts.
+    return static_cast<int>(static_cast<double>(power) / 1000);
 }
 
-Quantity<Watts, double> GpuMonitor::powerEnforcedLimit() {
+double GpuMonitor::powerEnforcedLimit() {
     unsigned int powerLimit;
     nvmlReturn = nvmlDeviceGetEnforcedPowerLimit(device, &powerLimit);
 
     checkNvmlReturn(QueryException());
-    return milli(watts)(static_cast<double>(powerLimit)).as(watts);
+    return static_cast<int>(static_cast<double>(powerLimit) / 1000);
 }
 
-Quantity<Mega<Hertz>, unsigned int> GpuMonitor::graphicsClockCurrent() {
+int GpuMonitor::graphicsClockCurrent() {
     return getClock(NVML_CLOCK_GRAPHICS, NVML_CLOCK_ID_CURRENT);
 }
 
-Quantity<Mega<Hertz>, unsigned int> GpuMonitor::graphicsClockMax() {
+int GpuMonitor::graphicsClockMax() {
     return getClock(NVML_CLOCK_GRAPHICS, NVML_CLOCK_ID_CUSTOMER_BOOST_MAX);
 }
 
-Quantity<Mega<Hertz>, unsigned int> GpuMonitor::memoryClockCurrent() {
+int GpuMonitor::memoryClockCurrent() {
     return getClock(NVML_CLOCK_MEM, NVML_CLOCK_ID_CURRENT);
 }
 
-Quantity<Mega<Hertz>, unsigned int> GpuMonitor::memoryClockMax() {
+int GpuMonitor::memoryClockMax() {
     return getClock(NVML_CLOCK_MEM, NVML_CLOCK_ID_CUSTOMER_BOOST_MAX);
 }
 
-Quantity<Percent, unsigned int> GpuMonitor::encoderUtilization() {
+int GpuMonitor::encoderUtilization() {
     unsigned int utilization;
     unsigned int sampling;
     nvmlReturn = nvmlDeviceGetEncoderUtilization(device, &utilization, &sampling);
 
     checkNvmlReturn(QueryException());
-    return percent(utilization);
+    return static_cast<int>(utilization);
 }
 
-Quantity<Percent, unsigned int> GpuMonitor::decoderUtilization() {
+int GpuMonitor::decoderUtilization() {
     unsigned int utilization;
     unsigned int sampling;
     nvmlReturn = nvmlDeviceGetDecoderUtilization(device, &utilization, &sampling);
 
     checkNvmlReturn(QueryException());
-    return percent(utilization);
+    return static_cast<int>(utilization);
 }
 
 std::string GpuMonitor::name() {
@@ -110,12 +111,12 @@ std::string GpuMonitor::pState() {
     return pStateString;
 }
 
-Quantity<Mega<Hertz>, unsigned int> GpuMonitor::getClock(const nvmlClockType_t type, const nvmlClockId_t id) {
+int GpuMonitor::getClock(const nvmlClockType_t type, const nvmlClockId_t id) {
     unsigned int clockSpeed;
     nvmlReturn = nvmlDeviceGetClock(device, type, id, &clockSpeed);
 
     checkNvmlReturn(QueryException());
-    return mega(hertz)(clockSpeed);
+    return static_cast<int>(clockSpeed);
 }
 
 template <typename Exception>

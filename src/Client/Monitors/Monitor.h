@@ -3,16 +3,20 @@
 
 #include <fstream>
 
+#include "CpuMonitor.h"
 #include "Metric.h"
 #include "MetricType.h"
 #include "Exceptions.h"
 
 namespace Cesame {
 class Monitor {
-public:
-    template <typename Unit, typename Rep>
-    static Metric<Unit, Rep> getMetric(const MetricType& type) {
+public: // Methods
+    static Metric getMetric(const MetricType& type) {
         switch (type.getName()) {
+            case CpuUsageRateAverage:
+                return cpuMonitors.at(type.getMonitorIndex()).usageRateAverage();
+            case CpuTemperaturePackage:
+                return cpuMonitors.at(type.getMonitorIndex()).temperaturePackage();
             default:
                 throw NotImplementedException();
         }
@@ -30,6 +34,13 @@ public:
             stream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
     }
+
+private: // Data
+    inline static std::vector<CpuMonitor> cpuMonitors = [] {
+        std::vector<CpuMonitor> cpuMonitors;
+        cpuMonitors.emplace_back();
+        return cpuMonitors;
+    }();
 };
 }
 
