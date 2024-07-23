@@ -25,6 +25,12 @@ add_executable(Client src/Client/main.cpp
         src/Client/Monitors/MemoryMonitor.h
         src/Client/Monitors/GpuMonitor.cpp
         src/Client/Monitors/GpuMonitor.h
+        src/Client/Window/MainWindow.cpp
+        src/Client/Window/MainWindow.h
+        src/Client/Window/MainWidget.cpp
+        src/Client/Window/MainWidget.h
+        src/Client/Window/Widgets/Label.cpp
+        src/Client/Window/Widgets/Label.h
 )
 
 target_include_directories(Client PRIVATE
@@ -33,7 +39,9 @@ target_include_directories(Client PRIVATE
         src/Client/Exceptions
         src/Client/Metrics
         src/Client/Monitors
-        dependencies/
+        src/Client/Window
+        src/Client/Window/Widgets
+        #dependencies/
 )
 
 target_link_libraries(Client

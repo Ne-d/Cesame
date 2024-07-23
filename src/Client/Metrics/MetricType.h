@@ -50,8 +50,6 @@ enum MetricName {
     GpuDecoderUsageRate,
 
     GpuName,
-    GpuBrand,
-    GpuArchitecture,
     GpuPState,
 
     // Memory (RAM)
@@ -77,18 +75,18 @@ enum MetricName {
 class MetricType {
 private:
     MetricName name;
-    unsigned int coreIndex;
+    unsigned int index;
     unsigned int monitorIndex;
 
 public:
     explicit MetricType(MetricName name, unsigned int coreIndex = 0, unsigned int monitorIndex = 0);
 
     [[nodiscard]] MetricName getName() const;
-    [[nodiscard]] unsigned int getCoreIndex() const;
+    [[nodiscard]] unsigned int getIndex() const;
     [[nodiscard]] unsigned int getMonitorIndex() const;
 
     void setName(const MetricName& name);
-    void setCoreIndex(const unsigned int& coreIndex);
+    void setIndex(const unsigned int& index);
     void setMonitorIndex(const unsigned int& monitorIndex);
 };
 }
