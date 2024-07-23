@@ -26,9 +26,6 @@ private: // Helper methods
 
 private: // Data
     QList<LabelElement> elements;
-
-    // For testing purposes
-    QTimer timer;
 };
 } // Cesame
 

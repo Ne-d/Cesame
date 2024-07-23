@@ -76,6 +76,39 @@ int GpuMonitor::memoryClockMax() {
     return getClock(NVML_CLOCK_MEM, NVML_CLOCK_ID_CUSTOMER_BOOST_MAX);
 }
 
+double GpuMonitor::memoryTotal() {
+    nvmlMemory_t memory;
+    nvmlReturn = nvmlDeviceGetMemoryInfo(device, &memory);
+
+    checkNvmlReturn(QueryException());
+    return static_cast<double>(memory.total) / bytesToGibibytes;
+}
+
+double GpuMonitor::memoryUsed() {
+    nvmlMemory_t memory;
+    nvmlReturn = nvmlDeviceGetMemoryInfo(device, &memory);
+
+    checkNvmlReturn(QueryException());
+    return static_cast<double>(memory.used) / bytesToGibibytes;
+}
+
+double GpuMonitor::memoryFree() {
+    nvmlMemory_t memory;
+    nvmlReturn = nvmlDeviceGetMemoryInfo(device, &memory);
+
+    checkNvmlReturn(QueryException());
+    return static_cast<double>(memory.free) / bytesToGibibytes;
+}
+
+double GpuMonitor::memoryBusWidth() {
+    unsigned int busWidth;
+    nvmlReturn = nvmlDeviceGetMemoryBusWidth(device, &busWidth);
+
+    checkNvmlReturn(QueryException());
+    return static_cast<double>(busWidth) / bytesToGibibytes;
+}
+
+
 int GpuMonitor::encoderUtilization() {
     unsigned int utilization;
     unsigned int sampling;

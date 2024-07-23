@@ -50,8 +50,6 @@ enum MetricName {
     GpuDecoderUsageRate,
 
     GpuName,
-    GpuBrand,
-    GpuArchitecture,
     GpuPState,
 
     // Memory (RAM)

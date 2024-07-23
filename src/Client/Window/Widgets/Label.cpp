@@ -3,13 +3,18 @@
 #include <iostream>
 #include <QTimer>
 
+#include "TimeManager.h"
+
 namespace Cesame {
 Label::Label(QWidget* parent, const QList<LabelElement>& elements) : QLabel{parent},
                                                                      elements(elements) {
-    connect(&timer, &QTimer::timeout, this, &Label::updateText);
-    timer.setInterval(std::chrono::milliseconds(1000));
-    timer.setSingleShot(false);
-    timer.start();
+    connect(&globalTimeManager.getTimer(), &QTimer::timeout, this, &Label::updateText);
+
+    // TODO: Use proper styling.
+    setFont(QFont("mono", 11));
+
+    // Start the global timer in case it wasn't done already.
+    globalTimeManager.start();
 
     updateText();
 }
@@ -54,11 +59,7 @@ QString Label::buildString() {
 }
 
 QString Label::formatNumber(const double number) {
-    std::ostringstream str;
-    str << std::fixed;
-    str << std::setprecision(2);
-    str << number;
-    return QString::fromStdString(str.str());
+    return QString::fromStdString(std::format("{:0>5.2f}", number));
 }
 }
 

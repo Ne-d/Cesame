@@ -39,6 +39,11 @@ double CpuMonitor::usageRateAverage() {
 }
 
 double CpuMonitor::usageRatePerCore(const unsigned int core) {
+    if (core < 1)
+        throw std::out_of_range("CpuMonitor::usageRatePerCore : core number must be at least 1.");
+    if (core > coreCount)
+        throw std::out_of_range("CpuMonitor::usageRatePerCore : core number must be no more than the core count.");
+
     return getUsageRateLine(core);
 }
 

@@ -34,10 +34,10 @@ public: // Methods
     // Clock Event Reasons stuff goes here.
 
     // Memory (VRAM)
-    int memoryTotal();
-    int memoryUsed();
-    int memoryFree();
-    int memoryBusWidth();
+    double memoryTotal();
+    double memoryUsed();
+    double memoryFree();
+    double memoryBusWidth();
 
     // Encoder and decoder
     int encoderUtilization();
@@ -57,6 +57,9 @@ private: // Helper methods
      */
     template <typename Exception>
     void checkNvmlReturn(Exception exception) const;
+
+private:
+    static constexpr double bytesToGibibytes = 1073741824;
 
 public: // Exceptions
     class NvmlInitException final : public std::exception {

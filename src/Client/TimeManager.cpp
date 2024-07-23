@@ -6,7 +6,6 @@ using namespace Cesame;
 TimeManager::TimeManager(const milliseconds interval) {
     timer.setInterval(interval);
     timer.setSingleShot(false);
-    timer.start();
 }
 
 QTimer& TimeManager::getTimer() {
@@ -20,6 +19,10 @@ QMetaObject::Connection TimeManager::connect(const QObject* sender, const char* 
 
 void TimeManager::setInterval(const milliseconds interval) {
     timer.setInterval(interval);
+}
+
+void TimeManager::start() {
+    timer.start();
 }
 
 time_point<steady_clock> TimeManager::getCurrentTimePoint() {

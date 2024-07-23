@@ -26,6 +26,8 @@ public: //Methods
 
     void setInterval(std::chrono::milliseconds interval);
 
+    void start();
+
     static std::chrono::time_point<std::chrono::steady_clock> getCurrentTimePoint();
 };
 
