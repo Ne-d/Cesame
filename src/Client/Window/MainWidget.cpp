@@ -35,7 +35,7 @@ MainWidget::MainWidget() {
     auto* cpuUsageLabel = new Label(this, {"CPU Usage: ", MetricType(CpuUsageRateAverage), "%"});
     cpuBox->addWidget(cpuUsageLabel);
 
-    auto* cpuTempLabel = new Label(this, {"CPU Temperatiure: ", MetricType(CpuTemperaturePackage), "°C"});
+    auto* cpuTempLabel = new Label(this, {"CPU Temperature: ", MetricType(CpuTemperaturePackage), "°C"});
     cpuBox->addWidget(cpuTempLabel);
 
     auto* cpuPowerLabel = new Label(this, {"CPU Power: ??.?? W"});
@@ -60,7 +60,7 @@ MainWidget::MainWidget() {
     auto* gpuUsageLabel = new Label(this, {"GPU Usage: ", MetricType(GpuUsageRate), "%"});
     gpuBox->addWidget(gpuUsageLabel);
 
-    auto* gpuTempLabel = new Label(this, {"GPU Temperatiure: ", MetricType(GpuTemperature), "°C"});
+    auto* gpuTempLabel = new Label(this, {"GPU Temperature: ", MetricType(GpuTemperature), "°C"});
     gpuBox->addWidget(gpuTempLabel);
 
     auto* gpuPowerLabel = new Label(this, {"GPU Power: ", MetricType(GpuPowerUsage), " W"});
