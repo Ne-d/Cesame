@@ -9,9 +9,6 @@ using namespace Cesame;
 using namespace std::chrono;
 
 CpuMonitor::CpuMonitor() {
-    // Initialize timings
-    currentTimePoint = steady_clock::now();
-
     // Initialize file streams
     statStream.open(statFile);
     if (!statStream.is_open())
@@ -25,13 +22,22 @@ CpuMonitor::CpuMonitor() {
     if (!infoStream.is_open())
         throw FileOpenException();
 
-    coreCount = 16; // TODO: Determine automatically.
+    nbCores = 16; // TODO: Determine automatically.
+
+    // Initialize timings
+    for (unsigned int i = 0; i <= nbCores; i++) {
+        previousTimePoints.push_back(getCurrentTimePoint());
+    }
 
     // Preparation of data arrays
-    totalTime.resize(coreCount + 1);
-    prevTotalTime.resize(coreCount + 1);
-    activeTime.resize(coreCount + 1);
-    prevActiveTime.resize(coreCount + 1);
+    totalTime.resize(nbCores + 1);
+    prevTotalTime.resize(nbCores + 1);
+    activeTime.resize(nbCores + 1);
+    prevActiveTime.resize(nbCores + 1);
+}
+
+int CpuMonitor::coreCount() const {
+    return static_cast<int>(nbCores);
 }
 
 double CpuMonitor::usageRateAverage() {
@@ -41,7 +47,7 @@ double CpuMonitor::usageRateAverage() {
 double CpuMonitor::usageRatePerCore(const unsigned int core) {
     if (core < 1)
         throw std::out_of_range("CpuMonitor::usageRatePerCore : core number must be at least 1.");
-    if (core > coreCount)
+    if (core > nbCores)
         throw std::out_of_range("CpuMonitor::usageRatePerCore : core number must be no more than the core count.");
 
     return getUsageRateLine(core);
@@ -66,11 +72,13 @@ double CpuMonitor::temperaturePackage() {
 
 #pragma region FuturePowerDrawMethods
 // ReSharper disable once CppMemberFunctionMayBeStatic
+// ReSharper disable once CppParameterNeverUsed
 double CpuMonitor::temperaturePerCore(unsigned int core) { // NOLINT(*-convert-member-functions-to-static)
     throw NotImplementedException();
 }
 
 // ReSharper disable once CppMemberFunctionMayBeStatic
+// ReSharper disable once CppParameterNeverUsed
 double CpuMonitor::powerDrawPerCore(unsigned int core) { // NOLINT(*-convert-member-functions-to-static)
     throw NotImplementedException();
 }
@@ -130,11 +138,11 @@ double CpuMonitor::clockSpeedAverage() {
 
     double sum = 0;
 
-    for (unsigned int i = 0; i < coreCount; ++i) {
+    for (unsigned int i = 0; i < nbCores; ++i) {
         sum += clockSpeedPerCore(i + 1);
     }
 
-    return sum / coreCount;
+    return sum / nbCores;
 }
 
 std::vector<int> CpuMonitor::getStatLine(const unsigned int lineNb) {
@@ -150,7 +158,7 @@ std::vector<int> CpuMonitor::getStatLine(const unsigned int lineNb) {
     iss.clear();
     iss.str(line);
 
-    std::vector<int> lineFields(fieldsPerLine);
+    std::vector<int> lineFields(FIELDS_PER_LINE);
 
     // For every field in the line.
     while (getline(iss, field, ' ')) {
@@ -166,26 +174,35 @@ std::vector<int> CpuMonitor::getStatLine(const unsigned int lineNb) {
 }
 
 double CpuMonitor::getUsageRateLine(const unsigned int lineNb) {
-    const std::vector<int> lineFields = getStatLine(lineNb);
+    // If the last update was less than epsilon milliseconds ago
+    if (getCurrentTimePoint() - previousTimePoints.at(lineNb) > epsilon) {
+        const std::vector<int> lineFields = getStatLine(lineNb);
 
-    prevTotalTime.at(lineNb) = totalTime.at(lineNb);
-    prevActiveTime.at(lineNb) = activeTime.at(lineNb);
+        prevTotalTime.at(lineNb) = totalTime.at(lineNb);
+        prevActiveTime.at(lineNb) = activeTime.at(lineNb);
 
-    // Reset values of totalTime and activeTime to allow for the next loop to increment them
-    totalTime.at(lineNb) = 0;
-    activeTime.at(lineNb) = 0;
+        // Reset values of totalTime and activeTime to allow for the next loop to increment them
+        totalTime.at(lineNb) = 0;
+        activeTime.at(lineNb) = 0;
 
-    for (unsigned int f = 0; f <= 9; f++) { // For every field in the line
-        // Accumulate values of the fields into totalTime
-        totalTime.at(lineNb) += lineFields.at(f);
+        for (unsigned int f = 0; f <= 9; f++) { // For every field in the line
+            // Accumulate values of the fields into totalTime
+            totalTime.at(lineNb) += lineFields.at(f);
 
-        // Accumulate values into activeTime only if they are not idle or iowait (fields 3 and 4)
-        if (f != 3 && f != 4)
-            activeTime.at(lineNb) += lineFields.at(f);
+            // Accumulate values into activeTime only if they are not idle or iowait (fields 3 and 4)
+            if (f != 3 && f != 4)
+                activeTime.at(lineNb) += lineFields.at(f);
+        }
+
+        previousTimePoints.at(lineNb) = getCurrentTimePoint();
     }
 
     // TODO: Make this one / two liner more clear cause I'm too lazy to do it now.
     return (static_cast<double>(activeTime.at(lineNb)) - static_cast<double>(prevActiveTime.at(lineNb))) /
         (static_cast<double>(totalTime.at(lineNb)) - static_cast<double>(prevTotalTime.at(lineNb))) * 100;
+}
+
+time_point<steady_clock> CpuMonitor::getCurrentTimePoint() {
+    return steady_clock::now();
 }
 

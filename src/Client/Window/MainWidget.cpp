@@ -3,6 +3,8 @@
 #include <QStyle>
 #include <QBoxLayout>
 
+#include "Bar.h"
+#include "CpuCoresBarGraph.h"
 #include "Label.h"
 
 namespace Cesame {
@@ -28,14 +30,12 @@ MainWidget::MainWidget() {
     auto* miscBox = new QVBoxLayout;
     mainBox->addLayout(miscBox);
 
-    auto* cpuGrid = new QGridLayout;
-
     // Labels
     // CPU
     auto* cpuUsageLabel = new Label(this, {"CPU Usage: ", MetricType(CpuUsageRateAverage), "%"});
     cpuBox->addWidget(cpuUsageLabel);
 
-    auto* cpuTempLabel = new Label(this, {"CPU Temperatiure: ", MetricType(CpuTemperaturePackage), "°C"});
+    auto* cpuTempLabel = new Label(this, {"CPU Temperature: ", MetricType(CpuTemperaturePackage), "°C"});
     cpuBox->addWidget(cpuTempLabel);
 
     auto* cpuPowerLabel = new Label(this, {"CPU Power: ??.?? W"});
@@ -44,23 +44,14 @@ MainWidget::MainWidget() {
     auto* cpuClockLabel = new Label(this, {"CPU Clock: ", MetricType(CpuClockSpeedAverage), " MHz"});
     cpuBox->addWidget(cpuClockLabel);
 
-    QList<Label*> cpuGridLabels;
-    for (int i = 0; i < 16; i++) {
-        auto* label = new Label(this, {
-                                    QString::fromStdString(std::to_string(i + 1)), ": ",
-                                    MetricType(CpuUsageRatePerCore, i + 1), "%"
-                                });
-        cpuGridLabels.push_back(label);
-
-        cpuGrid->addWidget(cpuGridLabels.at(i), i / 8, i % 8);
-    }
-    cpuBox->addLayout(cpuGrid);
+    auto* cpuCoresBarGraph = new CpuCoresBarGraph;
+    cpuBox->addWidget(cpuCoresBarGraph);
 
     // GPU
     auto* gpuUsageLabel = new Label(this, {"GPU Usage: ", MetricType(GpuUsageRate), "%"});
     gpuBox->addWidget(gpuUsageLabel);
 
-    auto* gpuTempLabel = new Label(this, {"GPU Temperatiure: ", MetricType(GpuTemperature), "°C"});
+    auto* gpuTempLabel = new Label(this, {"GPU Temperature: ", MetricType(GpuTemperature), "°C"});
     gpuBox->addWidget(gpuTempLabel);
 
     auto* gpuPowerLabel = new Label(this, {"GPU Power: ", MetricType(GpuPowerUsage), " W"});

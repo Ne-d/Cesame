@@ -17,6 +17,8 @@ class Monitor {
 public: // Methods
     static Metric getMetric(const MetricType& type) {
         switch (type.getName()) {
+            case CpuCoreCount:
+                return cpuMonitors.at(type.getMonitorIndex()).coreCount();
             case CpuUsageRateAverage:
                 return cpuMonitors.at(type.getMonitorIndex()).usageRateAverage();
             case CpuUsageRatePerCore:

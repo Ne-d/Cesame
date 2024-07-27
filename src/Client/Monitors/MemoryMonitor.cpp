@@ -34,15 +34,15 @@ MemoryMonitor::MemoryMonitor() {
 }
 
 double MemoryMonitor::total() {
-    return getMeminfoLine(0) / kiB_to_GiB;
+    return getMeminfoLine(0) / KIBIBYTES_TO_GIBIBYTES;
 }
 
 double MemoryMonitor::free() {
-    return getMeminfoLine(1) / kiB_to_GiB;
+    return getMeminfoLine(1) / KIBIBYTES_TO_GIBIBYTES;
 }
 
 double MemoryMonitor::available() {
-    return getMeminfoLine(2) / kiB_to_GiB;
+    return getMeminfoLine(2) / KIBIBYTES_TO_GIBIBYTES;
 }
 
 double MemoryMonitor::used() {

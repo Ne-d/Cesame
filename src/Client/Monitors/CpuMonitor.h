@@ -10,6 +10,8 @@ public:
     CpuMonitor();
 
 public: // Metric getters
+    int coreCount() const;
+
     double usageRateAverage();
     double usageRatePerCore(unsigned int core);
 
@@ -33,13 +35,12 @@ private: // Helper methods
      * @return A vector containing each field of the line.
      */
     std::vector<int> getStatLine(unsigned int lineNb);
-
     double getUsageRateLine(unsigned int lineNb);
+    static std::chrono::time_point<std::chrono::steady_clock> getCurrentTimePoint();
 
 private: // Data / state
     // Timings
-    std::chrono::time_point<std::chrono::steady_clock> currentTimePoint;
-    std::chrono::time_point<std::chrono::steady_clock> previousTimePoint;
+    std::vector<std::chrono::time_point<std::chrono::steady_clock>> previousTimePoints;
 
     // File streams
     const std::string statFile = "/proc/stat";
@@ -51,8 +52,6 @@ private: // Data / state
     std::ifstream infoStream;
     std::ifstream tempStream;
 
-    const unsigned int fieldsPerLine = 10;
-
     // Raw Data from /proc/stat
     std::vector<int> totalTime;
     std::vector<int> prevTotalTime;
@@ -60,7 +59,11 @@ private: // Data / state
     std::vector<int> activeTime;
     std::vector<int> prevActiveTime;
 
-    unsigned int coreCount;
+    unsigned int nbCores;
+
+    // Constants
+    static constexpr unsigned int FIELDS_PER_LINE = 10;
+    const std::chrono::milliseconds epsilon = std::chrono::milliseconds(10);
 };
 }
 
