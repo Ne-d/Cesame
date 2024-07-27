@@ -10,6 +10,8 @@ public:
     CpuMonitor();
 
 public: // Metric getters
+    int coreCount() const;
+
     double usageRateAverage();
     double usageRatePerCore(unsigned int core);
 
@@ -57,7 +59,7 @@ private: // Data / state
     std::vector<int> activeTime;
     std::vector<int> prevActiveTime;
 
-    unsigned int coreCount;
+    unsigned int nbCores;
 
     // Constants
     static constexpr unsigned int FIELDS_PER_LINE = 10;

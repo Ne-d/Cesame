@@ -22,18 +22,22 @@ CpuMonitor::CpuMonitor() {
     if (!infoStream.is_open())
         throw FileOpenException();
 
-    coreCount = 16; // TODO: Determine automatically.
+    nbCores = 16; // TODO: Determine automatically.
 
     // Initialize timings
-    for (unsigned int i = 0; i <= coreCount; i++) {
+    for (unsigned int i = 0; i <= nbCores; i++) {
         previousTimePoints.push_back(getCurrentTimePoint());
     }
 
     // Preparation of data arrays
-    totalTime.resize(coreCount + 1);
-    prevTotalTime.resize(coreCount + 1);
-    activeTime.resize(coreCount + 1);
-    prevActiveTime.resize(coreCount + 1);
+    totalTime.resize(nbCores + 1);
+    prevTotalTime.resize(nbCores + 1);
+    activeTime.resize(nbCores + 1);
+    prevActiveTime.resize(nbCores + 1);
+}
+
+int CpuMonitor::coreCount() const {
+    return static_cast<int>(nbCores);
 }
 
 double CpuMonitor::usageRateAverage() {
@@ -43,7 +47,7 @@ double CpuMonitor::usageRateAverage() {
 double CpuMonitor::usageRatePerCore(const unsigned int core) {
     if (core < 1)
         throw std::out_of_range("CpuMonitor::usageRatePerCore : core number must be at least 1.");
-    if (core > coreCount)
+    if (core > nbCores)
         throw std::out_of_range("CpuMonitor::usageRatePerCore : core number must be no more than the core count.");
 
     return getUsageRateLine(core);
@@ -132,11 +136,11 @@ double CpuMonitor::clockSpeedAverage() {
 
     double sum = 0;
 
-    for (unsigned int i = 0; i < coreCount; ++i) {
+    for (unsigned int i = 0; i < nbCores; ++i) {
         sum += clockSpeedPerCore(i + 1);
     }
 
-    return sum / coreCount;
+    return sum / nbCores;
 }
 
 std::vector<int> CpuMonitor::getStatLine(const unsigned int lineNb) {
