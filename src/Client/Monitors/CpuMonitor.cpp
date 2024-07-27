@@ -72,11 +72,13 @@ double CpuMonitor::temperaturePackage() {
 
 #pragma region FuturePowerDrawMethods
 // ReSharper disable once CppMemberFunctionMayBeStatic
+// ReSharper disable once CppParameterNeverUsed
 double CpuMonitor::temperaturePerCore(unsigned int core) { // NOLINT(*-convert-member-functions-to-static)
     throw NotImplementedException();
 }
 
 // ReSharper disable once CppMemberFunctionMayBeStatic
+// ReSharper disable once CppParameterNeverUsed
 double CpuMonitor::powerDrawPerCore(unsigned int core) { // NOLINT(*-convert-member-functions-to-static)
     throw NotImplementedException();
 }

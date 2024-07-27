@@ -38,10 +38,10 @@ void Bar::paintEvent(QPaintEvent* event) {
 
     // Get the value of the metric.
     const double value = getValue().value_or(0);
-    const double height = (value / maxValue) * contentsRect().height();
+    const double height = value / maxValue * contentsRect().height();
 
     // Draw the bar representing the value.
-    const QRectF bar = QRectF(contentsRect().left(), contentsRect().bottom() - (height), contentsRect().width(),
+    const QRectF bar = QRectF(contentsRect().left(), contentsRect().bottom() - height, contentsRect().width(),
                               height);
     painter.fillRect(bar, brush);
 

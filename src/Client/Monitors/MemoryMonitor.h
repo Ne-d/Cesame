@@ -26,7 +26,7 @@ public:
     double used();
 
 private:
-    static constexpr int kiB_to_GiB = 1048576;
+    static constexpr int KIBIBYTES_TO_GIBIBYTES = 1048576;
 };
 }
 

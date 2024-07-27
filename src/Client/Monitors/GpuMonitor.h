@@ -59,7 +59,7 @@ private: // Helper methods
     void checkNvmlReturn(Exception exception) const;
 
 private:
-    static constexpr double bytesToGibibytes = 1073741824;
+    static constexpr double BYTES_TO_GIBIBYTES = 1073741824;
 
 public: // Exceptions
     class NvmlInitException final : public std::exception {

@@ -81,7 +81,7 @@ double GpuMonitor::memoryTotal() {
     nvmlReturn = nvmlDeviceGetMemoryInfo(device, &memory);
 
     checkNvmlReturn(QueryException());
-    return static_cast<double>(memory.total) / bytesToGibibytes;
+    return static_cast<double>(memory.total) / BYTES_TO_GIBIBYTES;
 }
 
 double GpuMonitor::memoryUsed() {
@@ -89,7 +89,7 @@ double GpuMonitor::memoryUsed() {
     nvmlReturn = nvmlDeviceGetMemoryInfo(device, &memory);
 
     checkNvmlReturn(QueryException());
-    return static_cast<double>(memory.used) / bytesToGibibytes;
+    return static_cast<double>(memory.used) / BYTES_TO_GIBIBYTES;
 }
 
 double GpuMonitor::memoryFree() {
@@ -97,7 +97,7 @@ double GpuMonitor::memoryFree() {
     nvmlReturn = nvmlDeviceGetMemoryInfo(device, &memory);
 
     checkNvmlReturn(QueryException());
-    return static_cast<double>(memory.free) / bytesToGibibytes;
+    return static_cast<double>(memory.free) / BYTES_TO_GIBIBYTES;
 }
 
 double GpuMonitor::memoryBusWidth() {
@@ -105,7 +105,7 @@ double GpuMonitor::memoryBusWidth() {
     nvmlReturn = nvmlDeviceGetMemoryBusWidth(device, &busWidth);
 
     checkNvmlReturn(QueryException());
-    return static_cast<double>(busWidth) / bytesToGibibytes;
+    return static_cast<double>(busWidth) / BYTES_TO_GIBIBYTES;
 }
 
 

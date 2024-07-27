@@ -1,6 +1,5 @@
 #include "Label.h"
 
-#include <iostream>
 #include <QTimer>
 
 #include "TimeManager.h"
