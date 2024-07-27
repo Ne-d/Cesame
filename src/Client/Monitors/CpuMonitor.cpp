@@ -9,9 +9,6 @@ using namespace Cesame;
 using namespace std::chrono;
 
 CpuMonitor::CpuMonitor() {
-    // Initialize timings
-    currentTimePoint = steady_clock::now();
-
     // Initialize file streams
     statStream.open(statFile);
     if (!statStream.is_open())
@@ -26,6 +23,11 @@ CpuMonitor::CpuMonitor() {
         throw FileOpenException();
 
     coreCount = 16; // TODO: Determine automatically.
+
+    // Initialize timings
+    for (unsigned int i = 0; i <= coreCount; i++) {
+        previousTimePoints.push_back(getCurrentTimePoint());
+    }
 
     // Preparation of data arrays
     totalTime.resize(coreCount + 1);
@@ -150,7 +152,7 @@ std::vector<int> CpuMonitor::getStatLine(const unsigned int lineNb) {
     iss.clear();
     iss.str(line);
 
-    std::vector<int> lineFields(fieldsPerLine);
+    std::vector<int> lineFields(FIELDS_PER_LINE);
 
     // For every field in the line.
     while (getline(iss, field, ' ')) {
@@ -166,26 +168,35 @@ std::vector<int> CpuMonitor::getStatLine(const unsigned int lineNb) {
 }
 
 double CpuMonitor::getUsageRateLine(const unsigned int lineNb) {
-    const std::vector<int> lineFields = getStatLine(lineNb);
+    // If the last update was less than epsilon milliseconds ago
+    if (getCurrentTimePoint() - previousTimePoints.at(lineNb) > epsilon) {
+        const std::vector<int> lineFields = getStatLine(lineNb);
 
-    prevTotalTime.at(lineNb) = totalTime.at(lineNb);
-    prevActiveTime.at(lineNb) = activeTime.at(lineNb);
+        prevTotalTime.at(lineNb) = totalTime.at(lineNb);
+        prevActiveTime.at(lineNb) = activeTime.at(lineNb);
 
-    // Reset values of totalTime and activeTime to allow for the next loop to increment them
-    totalTime.at(lineNb) = 0;
-    activeTime.at(lineNb) = 0;
+        // Reset values of totalTime and activeTime to allow for the next loop to increment them
+        totalTime.at(lineNb) = 0;
+        activeTime.at(lineNb) = 0;
 
-    for (unsigned int f = 0; f <= 9; f++) { // For every field in the line
-        // Accumulate values of the fields into totalTime
-        totalTime.at(lineNb) += lineFields.at(f);
+        for (unsigned int f = 0; f <= 9; f++) { // For every field in the line
+            // Accumulate values of the fields into totalTime
+            totalTime.at(lineNb) += lineFields.at(f);
 
-        // Accumulate values into activeTime only if they are not idle or iowait (fields 3 and 4)
-        if (f != 3 && f != 4)
-            activeTime.at(lineNb) += lineFields.at(f);
+            // Accumulate values into activeTime only if they are not idle or iowait (fields 3 and 4)
+            if (f != 3 && f != 4)
+                activeTime.at(lineNb) += lineFields.at(f);
+        }
+
+        previousTimePoints.at(lineNb) = getCurrentTimePoint();
     }
 
     // TODO: Make this one / two liner more clear cause I'm too lazy to do it now.
     return (static_cast<double>(activeTime.at(lineNb)) - static_cast<double>(prevActiveTime.at(lineNb))) /
         (static_cast<double>(totalTime.at(lineNb)) - static_cast<double>(prevTotalTime.at(lineNb))) * 100;
+}
+
+time_point<steady_clock> CpuMonitor::getCurrentTimePoint() {
+    return steady_clock::now();
 }
 
