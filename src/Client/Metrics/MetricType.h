@@ -5,6 +5,8 @@
 namespace Cesame {
 enum MetricName {
     // CPU:
+    CpuCoreCount,
+
     CpuUsageRatePerCore,
     CpuUsageRateAverage,
 
