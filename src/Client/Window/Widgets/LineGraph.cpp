@@ -1,6 +1,5 @@
 #include "LineGraph.h"
 
-#include <iostream>
 #include <QPainter>
 
 #include "Metric.h"
@@ -63,8 +62,8 @@ void Cesame::LineGraph::paintEvent(QPaintEvent* event) {
         // For each data point of the current element
         for (int i = 0; i < element.dataPoints.size(); i++) {
             // Find the height of the current data point on the graph.
-            double y = contentsRect().height() - (element.dataPoints.at(i) * contentsRect().height() / element.
-                maxValue);
+            double y = contentsRect().height() - element.dataPoints.at(i) * contentsRect().height() / element.
+                maxValue;
 
             // Clamp the height of the point to the limits of the graph.
             y = std::clamp(y, 0.0, static_cast<double>(contentsRect().height()));

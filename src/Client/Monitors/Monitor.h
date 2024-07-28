@@ -25,18 +25,6 @@ public: // Methods
                 return cpuMonitors.at(type.getMonitorIndex()).usageRatePerCore(type.getIndex());
             case CpuTemperaturePackage:
                 return cpuMonitors.at(type.getMonitorIndex()).temperaturePackage();
-            case CpuTemperaturePerCore:
-                throw NotImplementedException();
-            case CpuTemperatureAverage:
-                throw NotImplementedException();
-            case CpuPowerDrawPerCore:
-                throw NotImplementedException();
-            case CpuPowerDrawSumOfCores:
-                throw NotImplementedException();
-            case CpuPowerDrawAverage:
-                throw NotImplementedException();
-            case CpuPowerDrawPackage:
-                throw NotImplementedException();
             case CpuClockSpeedPerCore:
                 return cpuMonitors.at(type.getMonitorIndex()).clockSpeedPerCore(type.getIndex());
             case CpuClockSpeedAverage:
@@ -47,14 +35,6 @@ public: // Methods
                 return gpuMonitors.at(type.getMonitorIndex()).memoryUtilization();
             case GpuTemperature:
                 return gpuMonitors.at(type.getMonitorIndex()).temperature();
-            case GpuFanSpeed:
-                throw NotImplementedException();
-            case GpuTargetFanSpeed:
-                throw NotImplementedException();
-            case GpuMinFanSpeed:
-                throw NotImplementedException();
-            case GpuMaxFanSpeed:
-                throw NotImplementedException();
             case GpuPowerUsage:
                 return gpuMonitors.at(type.getMonitorIndex()).power();
             case GpuEnforcedPowerLimit:
@@ -93,26 +73,6 @@ public: // Methods
                 return memoryMonitors.at(type.getMonitorIndex()).available();
             case MemoryUsed:
                 return memoryMonitors.at(type.getMonitorIndex()).used();
-            case MemoryUsedByCache:
-                throw NotImplementedException();
-            case MemoryUsedIncludingCache:
-                throw NotImplementedException();
-            case StorageAvailable:
-                throw NotImplementedException();
-            case StorageFree:
-                throw NotImplementedException();
-            case StorageUsed:
-                throw NotImplementedException();
-            case StorageTransferRate:
-                throw NotImplementedException();
-            case StorageUsageRate:
-                throw NotImplementedException();
-            case Frametime:
-                throw NotImplementedException();
-            case Framerate:
-                throw NotImplementedException();
-            case FramerateLow:
-                throw NotImplementedException();
             default:
                 throw NotImplementedException();
         }

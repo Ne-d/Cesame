@@ -1,8 +1,5 @@
 #include "MainWidget.h"
 
-#include <QStyle>
-#include <QBoxLayout>
-
 #include "Bar.h"
 #include "CpuCoresBarGraph.h"
 #include "Label.h"

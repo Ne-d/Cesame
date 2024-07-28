@@ -9,7 +9,6 @@
 namespace Cesame {
 Bar::Bar(QWidget* parent, const MetricType metricType, const double maxValue) : QWidget{parent},
     metricType(metricType),
-    value(0),
     maxValue(maxValue) {
     connect(&globalTimeManager.getTimer(), &QTimer::timeout, this, &Bar::updateData);
     globalTimeManager.start();
