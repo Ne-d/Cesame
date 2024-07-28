@@ -15,9 +15,6 @@ public: // Methods
 public slots:
     void paintEvent(QPaintEvent* event) override;
 
-private: // Helper methods
-    [[nodiscard]] std::optional<double> getValue() const;
-
 private: // Data
     MetricType metricType;
     double maxValue;

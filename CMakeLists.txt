@@ -35,6 +35,8 @@ add_executable(Client src/Client/main.cpp
         src/Client/Window/Widgets/Bar.h
         src/Client/Window/Widgets/CpuCoresBarGraph.cpp
         src/Client/Window/Widgets/CpuCoresBarGraph.h
+        src/Client/Window/Widgets/LineGraph.cpp
+        src/Client/Window/Widgets/LineGraph.h
 )
 
 target_include_directories(Client PRIVATE

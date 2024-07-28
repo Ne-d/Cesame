@@ -6,6 +6,7 @@
 #include "Bar.h"
 #include "CpuCoresBarGraph.h"
 #include "Label.h"
+#include "LineGraph.h"
 
 namespace Cesame {
 MainWidget::MainWidget() {
@@ -16,6 +17,10 @@ MainWidget::MainWidget() {
     constexpr unsigned int margins = 40;
     setContentsMargins(QMargins(margins, margins, margins, margins));
 
+    setupMainDemo();
+}
+
+void MainWidget::setupMainDemo() {
     // Layouts
     auto* mainBox = new QHBoxLayout;
     setLayout(mainBox);
@@ -72,5 +77,20 @@ MainWidget::MainWidget() {
                                       MetricType(MemoryTotal), " GB"
                                   });
     gpuBox->addWidget(memoryLabel);
+}
+
+void MainWidget::setupLineGraphDemo() {
+    auto* layout = new QVBoxLayout;
+
+    LineGraphElement elementCpuUsageAverage(MetricType(CpuUsageRateAverage), 100);
+    auto* lineGraphCpuUsageAverage = new LineGraph(this, {elementCpuUsageAverage}, 300);
+    layout->addWidget(lineGraphCpuUsageAverage);
+
+    LineGraphElement elementGpuPowerCurrent(MetricType(GpuPowerUsage), 150);
+    LineGraphElement elementGpuPowerMax(MetricType(GpuEnforcedPowerLimit), 150);
+    auto* lineGraphGpuPower = new LineGraph(this, {elementGpuPowerCurrent, elementGpuPowerMax}, 300);
+    layout->addWidget(lineGraphGpuPower);
+
+    setLayout(layout);
 }
 }
