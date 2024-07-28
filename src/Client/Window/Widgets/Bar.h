@@ -13,13 +13,12 @@ public: // Methods
     explicit Bar(QWidget* parent, MetricType metricType, double maxValue);
 
 public slots:
+    void updateData();
     void paintEvent(QPaintEvent* event) override;
-
-private: // Helper methods
-    [[nodiscard]] std::optional<double> getValue() const;
 
 private: // Data
     MetricType metricType;
+    double value{};
     double maxValue;
 };
 }

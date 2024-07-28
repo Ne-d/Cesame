@@ -81,7 +81,9 @@ private:
     unsigned int monitorIndex;
 
 public:
-    explicit MetricType(MetricName name, unsigned int coreIndex = 0, unsigned int monitorIndex = 0);
+    // ReSharper disable once CppNonExplicitConvertingConstructor
+    MetricType(MetricName name, unsigned int coreIndex = 0, // NOLINT(*-explicit-constructor)
+               unsigned int monitorIndex = 0);
 
     [[nodiscard]] MetricName getName() const;
     [[nodiscard]] unsigned int getIndex() const;

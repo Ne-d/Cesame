@@ -1,6 +1,5 @@
 #include "Bar.h"
 
-#include <iostream>
 #include <QPainter>
 
 #include "Monitor.h"
@@ -11,14 +10,22 @@ namespace Cesame {
 Bar::Bar(QWidget* parent, const MetricType metricType, const double maxValue) : QWidget{parent},
     metricType(metricType),
     maxValue(maxValue) {
-    connect(&globalTimeManager.getTimer(), &QTimer::timeout, this, QOverload<>::of(&QWidget::repaint));
+    connect(&globalTimeManager.getTimer(), &QTimer::timeout, this, &Bar::updateData);
     globalTimeManager.start();
+
+    setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+}
+
+void Bar::updateData() {
+    value = metricToDouble(Monitor::getMetric(metricType)).value_or(0);
+    repaint();
 }
 
 void Bar::paintEvent(QPaintEvent* event) {
+    QWidget::paintEvent(event);
+
     // Initialize Painter
-    QPainter painter;
-    painter.begin(this);
+    QPainter painter(this);
 
     // Initialize Pen and Brush
     QPen pen;
@@ -37,26 +44,11 @@ void Bar::paintEvent(QPaintEvent* event) {
     painter.drawRect(contentsRect().marginsRemoved(QMargins(0, 0, 1, 1)));
 
     // Get the value of the metric.
-    const double value = getValue().value_or(0);
     const double height = value / maxValue * contentsRect().height();
 
     // Draw the bar representing the value.
     const QRectF bar = QRectF(contentsRect().left(), contentsRect().bottom() - height, contentsRect().width(),
                               height);
     painter.fillRect(bar, brush);
-
-    painter.end();
-}
-
-std::optional<double> Bar::getValue() const {
-    const Metric metric = Monitor::getMetric(metricType);
-
-    if (std::holds_alternative<double>(metric))
-        return std::optional{std::get<double>(metric)};
-
-    if (std::holds_alternative<int>(metric))
-        return std::optional{static_cast<double>(std::get<int>(metric))};
-
-    return std::nullopt;
 }
 }

@@ -7,6 +7,10 @@ namespace Cesame {
 class MainWidget final : public QWidget {
 public:
     MainWidget();
+
+private: // Demo setup methods
+    void setupMainDemo();
+    void setupLineGraphDemo();
 };
 }
 

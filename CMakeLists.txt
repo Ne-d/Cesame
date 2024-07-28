@@ -35,6 +35,10 @@ add_executable(Client src/Client/main.cpp
         src/Client/Window/Widgets/Bar.h
         src/Client/Window/Widgets/CpuCoresBarGraph.cpp
         src/Client/Window/Widgets/CpuCoresBarGraph.h
+        src/Client/Window/Widgets/LineGraph.cpp
+        src/Client/Window/Widgets/LineGraph.h
+        src/Client/Monitors/LineGraphLabeled.cpp
+        src/Client/Monitors/LineGraphLabeled.h
 )
 
 target_include_directories(Client PRIVATE
@@ -54,24 +58,3 @@ target_link_libraries(Client
         Qt::Widgets
         CUDA::nvml
 )
-
-# Tests
-enable_testing()
-
-add_executable(Tests)
-
-target_include_directories(Tests PRIVATE
-        src/
-        src/Client/
-        src/Client/Exceptions
-        src/Client/Metrics
-        src/Client/Monitors
-        dependencies/
-)
-
-target_link_libraries(Tests
-        GTest::gtest_main
-)
-
-include(GoogleTest)
-gtest_discover_tests(Tests)
