@@ -9,11 +9,17 @@
 namespace Cesame {
 Bar::Bar(QWidget* parent, const MetricType metricType, const double maxValue) : QWidget{parent},
     metricType(metricType),
+    value(0),
     maxValue(maxValue) {
-    connect(&globalTimeManager.getTimer(), &QTimer::timeout, this, QOverload<>::of(&QWidget::repaint));
+    connect(&globalTimeManager.getTimer(), &QTimer::timeout, this, &Bar::updateData);
     globalTimeManager.start();
 
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+}
+
+void Bar::updateData() {
+    value = metricToDouble(Monitor::getMetric(metricType)).value_or(0);
+    repaint();
 }
 
 void Bar::paintEvent(QPaintEvent* event) {
@@ -39,7 +45,6 @@ void Bar::paintEvent(QPaintEvent* event) {
     painter.drawRect(contentsRect().marginsRemoved(QMargins(0, 0, 1, 1)));
 
     // Get the value of the metric.
-    const double value = metricToDouble(Monitor::getMetric(metricType)).value_or(0);
     const double height = value / maxValue * contentsRect().height();
 
     // Draw the bar representing the value.
