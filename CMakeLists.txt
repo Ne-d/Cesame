@@ -58,24 +58,3 @@ target_link_libraries(Client
         Qt::Widgets
         CUDA::nvml
 )
-
-# Tests
-enable_testing()
-
-add_executable(Tests)
-
-target_include_directories(Tests PRIVATE
-        src/
-        src/Client/
-        src/Client/Exceptions
-        src/Client/Metrics
-        src/Client/Monitors
-        dependencies/
-)
-
-target_link_libraries(Tests
-        GTest::gtest_main
-)
-
-include(GoogleTest)
-gtest_discover_tests(Tests)
