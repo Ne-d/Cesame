@@ -12,6 +12,8 @@ Bar::Bar(QWidget* parent, const MetricType metricType, const double maxValue) : 
     maxValue(maxValue) {
     connect(&globalTimeManager.getTimer(), &QTimer::timeout, this, QOverload<>::of(&QWidget::repaint));
     globalTimeManager.start();
+
+    setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 }
 
 void Bar::paintEvent(QPaintEvent* event) {
