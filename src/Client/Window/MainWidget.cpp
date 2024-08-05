@@ -80,7 +80,7 @@ void MainWidget::setupMainDemo() {
     gpuBox->addWidget(gpuClockGraph);
 
     auto* gpuMemoryGraph = new LineGraphLabeled({{GpuMemoryUsed, 8},}, nbDataPoints,
-                                                {"VRAM Usage: ", MemoryUsed, " GB / ", GpuMemoryTotal, " GB"});
+                                                {"VRAM Usage: ", GpuMemoryUsed, " GB / ", GpuMemoryTotal, " GB"});
     gpuBox->addWidget(gpuMemoryGraph);
 }
 
