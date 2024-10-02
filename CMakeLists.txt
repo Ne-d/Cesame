@@ -39,6 +39,8 @@ add_executable(Client src/Client/main.cpp
         src/Client/Window/Widgets/LineGraph.h
         src/Client/Window/Widgets/LineGraphLabeled.cpp
         src/Client/Window/Widgets/LineGraphLabeled.h
+        src/Client/Window/Style/ColorPalette.cpp
+        src/Client/Window/Style/ColorPalette.h
 )
 
 target_include_directories(Client PRIVATE
