@@ -1,5 +1,7 @@
 #include "MainWidget.h"
 
+#include <QPointer>
+
 #include "Bar.h"
 #include "CpuCoresBarGraph.h"
 #include "Label.h"
@@ -22,17 +24,17 @@ void MainWidget::setupMainDemo() {
     constexpr unsigned int nbDataPoints = 300;
 
     // Layouts
-    auto* mainBox = new QHBoxLayout;
+    const QPointer mainBox = new QHBoxLayout();
     setLayout(mainBox);
     mainBox->setSpacing(40);
 
-    auto* cpuBox = new QVBoxLayout;
+    const QPointer cpuBox = new QVBoxLayout();
     mainBox->addLayout(cpuBox);
 
-    auto* gpuBox = new QVBoxLayout;
+    const QPointer gpuBox = new QVBoxLayout();
     mainBox->addLayout(gpuBox);
 
-    auto* miscBox = new QVBoxLayout;
+    const QPointer miscBox = new QVBoxLayout();
     mainBox->addLayout(miscBox);
 
     // Labels
