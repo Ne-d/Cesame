@@ -93,7 +93,7 @@
     </inspection_tool>
     <inspection_tool class="LongLine" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MagicNumberJS" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="Misra" enabled="true" level="WARNING" enabled_by_default="true">
+    <inspection_tool class="Misra" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="myMisraCPPChecks" value="clion-misra-cpp2008-*,-clion-misra-cpp2008-6-4-1, -clion-misra-cpp2008-6-6-5" />
     </inspection_tool>
     <inspection_tool class="NegatedConditionalExpressionJS" enabled="true" level="WARNING" enabled_by_default="true" />

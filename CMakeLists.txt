@@ -16,7 +16,8 @@ find_package(GTest REQUIRED)
 
 find_package(CUDAToolkit REQUIRED)
 
-add_executable(Client src/Client/main.cpp
+add_executable(Client
+        src/Client/main.cpp
         src/Client/TimeManager.cpp
         src/Client/Metrics/MetricType.cpp
         src/Client/Monitors/CpuMonitor.cpp
@@ -53,7 +54,6 @@ target_include_directories(Client PRIVATE
         src/Client/Monitors
         src/Client/Window
         src/Client/Window/Widgets
-        #dependencies/
 )
 
 target_link_libraries(Client
@@ -66,7 +66,38 @@ target_link_libraries(Client
 # Tests
 enable_testing()
 
-add_executable(Tests)
+add_executable(Tests
+        # Source files
+        src/Client/TimeManager.cpp
+        src/Client/Metrics/MetricType.cpp
+        src/Client/Monitors/CpuMonitor.cpp
+        src/Client/Monitors/CpuMonitor.h
+        src/Client/Monitors/MemoryMonitor.cpp
+        src/Client/Monitors/MemoryMonitor.h
+        src/Client/Monitors/GpuMonitor.cpp
+        src/Client/Monitors/GpuMonitor.h
+        src/Client/Window/MainWindow.cpp
+        src/Client/Window/MainWindow.h
+        src/Client/Window/MainWidget.cpp
+        src/Client/Window/MainWidget.h
+        src/Client/Window/Widgets/Label.cpp
+        src/Client/Window/Widgets/Label.h
+        src/Client/Window/Widgets/Bar.cpp
+        src/Client/Window/Widgets/Bar.h
+        src/Client/Window/Widgets/CpuCoresBarGraph.cpp
+        src/Client/Window/Widgets/CpuCoresBarGraph.h
+        src/Client/Window/Widgets/LineGraph.cpp
+        src/Client/Window/Widgets/LineGraph.h
+        src/Client/Window/Widgets/LineGraphLabeled.cpp
+        src/Client/Window/Widgets/LineGraphLabeled.h
+        src/Client/Window/Style/ColorPalette.cpp
+        src/Client/Window/Style/ColorPalette.h
+        src/Client/Window/Style/ColorRange.cpp
+        src/Client/Window/Style/ColorRange.h
+
+        # Test files
+        tests/ColorPaletteTests.cpp
+)
 
 target_include_directories(Tests PRIVATE
         src/
@@ -74,11 +105,16 @@ target_include_directories(Tests PRIVATE
         src/Client/Exceptions
         src/Client/Metrics
         src/Client/Monitors
-        dependencies/
+        src/Client/Window
+        src/Client/Window/Widgets
 )
 
 target_link_libraries(Tests
         GTest::gtest_main
+        Qt::Core
+        Qt::Gui
+        Qt::Widgets
+        CUDA::nvml
 )
 
 include(GoogleTest)
