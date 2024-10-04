@@ -97,6 +97,7 @@ add_executable(Tests
 
         # Test files
         tests/ColorPaletteTests.cpp
+        tests/ColorRangeTests.cpp
 )
 
 target_include_directories(Tests PRIVATE

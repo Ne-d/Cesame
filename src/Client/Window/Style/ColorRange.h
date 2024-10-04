@@ -30,7 +30,7 @@ class ColorRangeList {
 public:
     explicit ColorRangeList(QList<ColorRange> list);
 
-    [[nodiscard]] QColor getColor(double value) const;
+    [[nodiscard]] std::optional<QColor> getColor(double value) const;
 
 private:
     QList<ColorRange> colorRanges;

@@ -39,19 +39,22 @@ void ColorRange::setColor(const QColor& color) {
 
 ColorRangeList::ColorRangeList(QList<ColorRange> list) : colorRanges(std::move(list)) {}
 
-QColor ColorRangeList::getColor(const double value) const {
+std::optional<QColor> ColorRangeList::getColor(const double value) const {
+    if (colorRanges.empty())
+        return std::nullopt;
+
     const ColorRange& firstRange = colorRanges.constFirst();
     const ColorRange& lastRange = colorRanges.constLast();
 
     if (value < firstRange.getLowerBound())
         return colorRanges.constFirst().getColor();
 
-    if (value > lastRange.getUpperBound())
+    if (value >= lastRange.getUpperBound())
         return colorRanges.constLast().getColor();
 
     for (const ColorRange& range : colorRanges) {
         // If the value is within the bounds of the ColorRange
-        if (range.getLowerBound() < value && range.getUpperBound() > value) {
+        if (range.getLowerBound() <= value && range.getUpperBound() > value) {
             return range.getColor();
         }
     }
