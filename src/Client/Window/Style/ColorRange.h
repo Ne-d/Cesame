@@ -15,8 +15,10 @@ public:
     // Accessors
     [[nodiscard]] double getLowerBound() const;
     void setLowerBound(double lowerBound);
+
     [[nodiscard]] double getUpperBound() const;
     void setUpperBound(double upperBound);
+
     [[nodiscard]] QColor getColor() const;
     void setColor(const QColor& color);
 
@@ -26,10 +28,12 @@ private:
     QColor color;
 };
 
+/**
+ * Represents a list of ColorRanges, giving access to the desired color for any value.
+ */
 class ColorRangeList {
 public:
     explicit ColorRangeList(QList<ColorRange> list);
-
     [[nodiscard]] std::optional<QColor> getColor(double value) const;
 
 private:
