@@ -59,4 +59,8 @@ QColor ColorRangeList::getColor(const double value) const {
 
     return firstRange.getColor();
 }
+
+bool ColorRangeList::isEmpty() const {
+    return colorRanges.isEmpty();
+}
 } // Cesame
