@@ -25,7 +25,7 @@ protected:
 };
 
 TEST_F(ColorPaletteTests, TestEmptyPalette) {
-    ASSERT_EQ(emptyPalette.getColor("something"), std::nullopt);
+    ASSERT_THROW((void)emptyPalette.getColor("something"), std::invalid_argument);
 }
 
 TEST_F(ColorPaletteTests, TestExistingColors) {

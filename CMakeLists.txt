@@ -44,6 +44,8 @@ add_executable(Client
         src/Client/Window/Style/ColorPalette.h
         src/Client/Window/Style/ColorRange.cpp
         src/Client/Window/Style/ColorRange.h
+        src/Client/Window/Style/StyleManager.cpp
+        src/Client/Window/Style/StyleManager.h
 )
 
 target_include_directories(Client PRIVATE
@@ -54,6 +56,7 @@ target_include_directories(Client PRIVATE
         src/Client/Monitors
         src/Client/Window
         src/Client/Window/Widgets
+        src/Client/Window/Style
 )
 
 target_link_libraries(Client
@@ -94,6 +97,8 @@ add_executable(Tests
         src/Client/Window/Style/ColorPalette.h
         src/Client/Window/Style/ColorRange.cpp
         src/Client/Window/Style/ColorRange.h
+        src/Client/Window/Style/StyleManager.cpp
+        src/Client/Window/Style/StyleManager.h
 
         # Test files
         tests/ColorPaletteTests.cpp
@@ -108,6 +113,7 @@ target_include_directories(Tests PRIVATE
         src/Client/Monitors
         src/Client/Window
         src/Client/Window/Widgets
+        src/Client/Window/Style
 )
 
 target_link_libraries(Tests

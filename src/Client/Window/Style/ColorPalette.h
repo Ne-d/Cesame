@@ -13,7 +13,7 @@ public:
     explicit ColorPalette() = default;
     explicit ColorPalette(std::map<std::string, QColor> colors);
 
-    [[nodiscard]] std::optional<QColor> getColor(const std::string& colorName) const;
+    [[nodiscard]] QColor getColor(const std::string& colorName) const;
     void addColor(const std::string& colorName, const QColor& color);
 
 private:

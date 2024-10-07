@@ -5,11 +5,11 @@
 namespace Cesame {
 ColorPalette::ColorPalette(std::map<std::string, QColor> colors) : colors(std::move(colors)) {}
 
-std::optional<QColor> ColorPalette::getColor(const std::string& colorName) const {
+QColor ColorPalette::getColor(const std::string& colorName) const {
     if (colors.contains(colorName))
-        return std::make_optional(colors.at(colorName));
+        return colors.at(colorName);
 
-    return std::nullopt;
+    throw std::invalid_argument("ColorPalette::getColor: Invalid color name");
 }
 
 void ColorPalette::addColor(const std::string& colorName, const QColor& color) {

@@ -1,7 +1,5 @@
 #include "ColorRange.h"
 
-#include <list>
-
 namespace Cesame {
 // ColorRange Class
 
@@ -39,9 +37,9 @@ void ColorRange::setColor(const QColor& color) {
 
 ColorRangeList::ColorRangeList(QList<ColorRange> list) : colorRanges(std::move(list)) {}
 
-std::optional<QColor> ColorRangeList::getColor(const double value) const {
+QColor ColorRangeList::getColor(const double value) const {
     if (colorRanges.empty())
-        return std::nullopt;
+        throw std::runtime_error("ColorRangeList::getColor: no color ranges");
 
     const ColorRange& firstRange = colorRanges.constFirst();
     const ColorRange& lastRange = colorRanges.constLast();

@@ -3,10 +3,12 @@
 #include <QPointer>
 
 #include "Bar.h"
+#include "ColorPalette.h"
 #include "CpuCoresBarGraph.h"
 #include "Label.h"
 #include "LineGraph.h"
 #include "LineGraphLabeled.h"
+#include "StyleManager.h"
 
 namespace Cesame {
 MainWidget::MainWidget() {
@@ -22,6 +24,7 @@ MainWidget::MainWidget() {
 
 void MainWidget::setupMainDemo() {
     constexpr unsigned int nbDataPoints = 300;
+    const ColorPalette palette = StyleManager::getInstance().getDefaultPalette();
 
     // Layouts
     const QPointer mainBox = new QHBoxLayout();
@@ -56,7 +59,11 @@ void MainWidget::setupMainDemo() {
                                              {"Memory Usage: ", MemoryUsed, " GB / ", MemoryTotal, " GB"});
     cpuBox->addWidget(memoryGraph);
 
-    auto* cpuCoresBarGraph = new CpuCoresBarGraph;
+    auto* cpuCoresBarGraph = new CpuCoresBarGraph(ColorRangeList({
+        {0, 75, palette.getColor("white4")},
+        {75, 95, palette.getColor("orange")},
+        {95, 100, palette.getColor("red")}
+    }));
     cpuBox->addWidget(cpuCoresBarGraph);
 
 

@@ -15,10 +15,10 @@ protected:
 };
 
 TEST_F(ColorRangeTests, TestEmptyList) {
-    EXPECT_EQ(emptyList.getColor(0), std::nullopt);
-    EXPECT_EQ(emptyList.getColor(50), std::nullopt);
-    EXPECT_EQ(emptyList.getColor(69), std::nullopt);
-    EXPECT_EQ(emptyList.getColor(100), std::nullopt);
+    EXPECT_THROW((void)emptyList.getColor(0), std::runtime_error);
+    EXPECT_THROW((void)emptyList.getColor(50), std::runtime_error);
+    EXPECT_THROW((void)emptyList.getColor(69), std::runtime_error);
+    EXPECT_THROW((void)emptyList.getColor(100), std::runtime_error);
 }
 
 TEST_F(ColorRangeTests, TestNormalValues) {
