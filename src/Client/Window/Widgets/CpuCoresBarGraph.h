@@ -8,7 +8,7 @@
 namespace Cesame {
 class CpuCoresBarGraph final : public QWidget {
 public: // Methods
-    CpuCoresBarGraph();
+    explicit CpuCoresBarGraph(const ColorRangeList& colorRanges);
 
 private: // Data
     QGridLayout layout;

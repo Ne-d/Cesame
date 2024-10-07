@@ -4,13 +4,14 @@
 #include <QWidget>
 
 #include "MetricType.h"
+#include "ColorRange.h"
 
 namespace Cesame {
 class Bar final : public QWidget {
     Q_OBJECT
 
 public: // Methods
-    explicit Bar(QWidget* parent, MetricType metricType, double maxValue);
+    explicit Bar(QWidget* parent, MetricType metricType, double maxValue, ColorRangeList colorRanges);
 
 public slots:
     void updateData();
@@ -20,6 +21,7 @@ private: // Data
     MetricType metricType;
     double value{};
     double maxValue;
+    ColorRangeList colorRanges;
 };
 }
 

@@ -1,16 +1,19 @@
 #include "Bar.h"
 
 #include <QPainter>
+#include <utility>
 
 #include "Monitor.h"
 #include "TimeManager.h"
 
 
 namespace Cesame {
-Bar::Bar(QWidget* parent, const MetricType metricType, const double maxValue) : QWidget{parent},
+Bar::Bar(QWidget* parent, const MetricType metricType, const double maxValue, ColorRangeList colorRanges) :
+    QWidget{parent},
     metricType(metricType),
-    maxValue(maxValue) {
-    connect(&globalTimeManager.getTimer(), &QTimer::timeout, this, &Bar::updateData);
+    maxValue(maxValue),
+    colorRanges(std::move(colorRanges)) {
+    connect(&globalTimeManager.getTimer(), &QTimer::timeout, this, &Bar::updateData); // NOLINT(*-unused-return-value)
     globalTimeManager.start();
 
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
@@ -29,7 +32,7 @@ void Bar::paintEvent(QPaintEvent* event) {
 
     // Initialize Pen and Brush
     QPen pen;
-    const QBrush brush(QColor::fromRgb(255, 255, 255));
+    const QBrush brush(colorRanges.getColor(value));
     pen.setBrush(brush);
 
     pen.setStyle(Qt::SolidLine);

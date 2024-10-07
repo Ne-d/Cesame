@@ -1,10 +1,14 @@
 #include "MainWidget.h"
 
+#include <QPointer>
+
 #include "Bar.h"
+#include "ColorPalette.h"
 #include "CpuCoresBarGraph.h"
 #include "Label.h"
 #include "LineGraph.h"
 #include "LineGraphLabeled.h"
+#include "StyleManager.h"
 
 namespace Cesame {
 MainWidget::MainWidget() {
@@ -20,19 +24,20 @@ MainWidget::MainWidget() {
 
 void MainWidget::setupMainDemo() {
     constexpr unsigned int nbDataPoints = 300;
+    const ColorPalette palette = StyleManager::getInstance().getDefaultPalette();
 
     // Layouts
-    auto* mainBox = new QHBoxLayout;
+    const QPointer mainBox = new QHBoxLayout();
     setLayout(mainBox);
     mainBox->setSpacing(40);
 
-    auto* cpuBox = new QVBoxLayout;
+    const QPointer cpuBox = new QVBoxLayout();
     mainBox->addLayout(cpuBox);
 
-    auto* gpuBox = new QVBoxLayout;
+    const QPointer gpuBox = new QVBoxLayout();
     mainBox->addLayout(gpuBox);
 
-    auto* miscBox = new QVBoxLayout;
+    const QPointer miscBox = new QVBoxLayout();
     mainBox->addLayout(miscBox);
 
     // Labels
@@ -54,7 +59,11 @@ void MainWidget::setupMainDemo() {
                                              {"Memory Usage: ", MemoryUsed, " GB / ", MemoryTotal, " GB"});
     cpuBox->addWidget(memoryGraph);
 
-    auto* cpuCoresBarGraph = new CpuCoresBarGraph;
+    auto* cpuCoresBarGraph = new CpuCoresBarGraph(ColorRangeList({
+        {0, 75, palette.getColor("white4")},
+        {75, 95, palette.getColor("orange")},
+        {95, 100, palette.getColor("red")}
+    }));
     cpuBox->addWidget(cpuCoresBarGraph);
 
 
@@ -80,7 +89,7 @@ void MainWidget::setupMainDemo() {
     gpuBox->addWidget(gpuClockGraph);
 
     auto* gpuMemoryGraph = new LineGraphLabeled({{GpuMemoryUsed, 8},}, nbDataPoints,
-                                                {"VRAM Usage: ", MemoryUsed, " GB / ", GpuMemoryTotal, " GB"});
+                                                {"VRAM Usage: ", GpuMemoryUsed, " GB / ", GpuMemoryTotal, " GB"});
     gpuBox->addWidget(gpuMemoryGraph);
 }
 
