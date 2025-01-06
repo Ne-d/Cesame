@@ -5,8 +5,12 @@
 #include "TimeManager.h"
 
 namespace Cesame {
-Label::Label(QWidget* parent, const QList<LabelElement>& elements) : QLabel{parent},
-                                                                     elements(elements) {
+Label::Label(QWidget* parent, const QList<LabelElement>& elements, const unsigned int colorRangeElementIndex) :
+    QLabel{parent},
+    elements(elements),
+    colorRanges({}),
+    colorRangeElementIndex(colorRangeElementIndex) {
+    // NOLINT(*-unused-return-value)
     connect(&globalTimeManager.getTimer(), &QTimer::timeout, this, &Label::updateText);
 
     // TODO: Use proper styling.
@@ -19,15 +23,18 @@ Label::Label(QWidget* parent, const QList<LabelElement>& elements) : QLabel{pare
 }
 
 void Label::updateText() {
-    setText(buildString());
+    if (elements.size() >= colorRangeElementIndex && !colorRanges.isEmpty())
+        if (std::holds_alternative<MetricType>(elements.at(colorRangeElementIndex))) {
+            const MetricType type = std::get<MetricType>(elements.at(colorRangeElementIndex));
+            color = colorRanges.getColor(std::get<double>(Monitor::getMetric(type)));
+        }
+
+    setText(buildString(color));
 }
 
 QString Label::metricToString(const Metric& metric) {
     if (std::holds_alternative<double>(metric))
         return formatNumber(std::get<double>(metric));
-
-    if (std::holds_alternative<int>(metric))
-        return formatNumber(std::get<int>(metric));
 
     if (std::holds_alternative<std::string>(metric))
         return QString::fromStdString(std::get<std::string>(metric));
@@ -35,7 +42,7 @@ QString Label::metricToString(const Metric& metric) {
     return {"?"};
 }
 
-QString Label::buildString() {
+QString Label::buildString(const QColor& color) {
     QString string;
 
     // For every label element in the list.

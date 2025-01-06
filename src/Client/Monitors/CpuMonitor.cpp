@@ -36,8 +36,8 @@ CpuMonitor::CpuMonitor() {
     prevActiveTime.resize(nbCores + 1);
 }
 
-int CpuMonitor::coreCount() const {
-    return static_cast<int>(nbCores);
+double CpuMonitor::coreCount() const {
+    return nbCores;
 }
 
 double CpuMonitor::usageRateAverage() {

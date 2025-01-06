@@ -18,28 +18,28 @@ GpuMonitor::GpuMonitor(const unsigned int deviceIndex) {
     checkNvmlReturn(NvmlGetHandleException());
 }
 
-int GpuMonitor::utilization() {
+double GpuMonitor::utilization() {
     nvmlUtilization_t utilization;
     nvmlReturn = nvmlDeviceGetUtilizationRates(device, &utilization);
 
     checkNvmlReturn(QueryException());
-    return static_cast<int>(utilization.gpu);
+    return utilization.gpu;
 }
 
-int GpuMonitor::memoryUtilization() {
+double GpuMonitor::memoryUtilization() {
     nvmlUtilization_t utilization;
     nvmlReturn = nvmlDeviceGetUtilizationRates(device, &utilization);
 
     checkNvmlReturn(QueryException());
-    return static_cast<int>(utilization.memory);
+    return utilization.memory;
 }
 
-int GpuMonitor::temperature() {
+double GpuMonitor::temperature() {
     unsigned int temp;
     nvmlReturn = nvmlDeviceGetTemperature(device, NVML_TEMPERATURE_GPU, &temp);
 
     checkNvmlReturn(QueryException());
-    return static_cast<int>(temp);
+    return temp;
 }
 
 double GpuMonitor::power() {
@@ -48,7 +48,7 @@ double GpuMonitor::power() {
 
     checkNvmlReturn(QueryException());
 
-    // We divide by 1000 because NVML returns values in williwatts.
+    // We divide by 1000 because NVML returns values in milliwatts.
     return static_cast<int>(static_cast<double>(power) / 1000);
 }
 
@@ -60,19 +60,19 @@ double GpuMonitor::powerEnforcedLimit() {
     return static_cast<int>(static_cast<double>(powerLimit) / 1000);
 }
 
-int GpuMonitor::graphicsClockCurrent() {
+double GpuMonitor::graphicsClockCurrent() {
     return getClock(NVML_CLOCK_GRAPHICS, NVML_CLOCK_ID_CURRENT);
 }
 
-int GpuMonitor::graphicsClockMax() {
+double GpuMonitor::graphicsClockMax() {
     return getClock(NVML_CLOCK_GRAPHICS, NVML_CLOCK_ID_CUSTOMER_BOOST_MAX);
 }
 
-int GpuMonitor::memoryClockCurrent() {
+double GpuMonitor::memoryClockCurrent() {
     return getClock(NVML_CLOCK_MEM, NVML_CLOCK_ID_CURRENT);
 }
 
-int GpuMonitor::memoryClockMax() {
+double GpuMonitor::memoryClockMax() {
     return getClock(NVML_CLOCK_MEM, NVML_CLOCK_ID_CUSTOMER_BOOST_MAX);
 }
 
@@ -108,8 +108,7 @@ double GpuMonitor::memoryBusWidth() {
     return static_cast<double>(busWidth) / BYTES_TO_GIBIBYTES;
 }
 
-
-int GpuMonitor::encoderUtilization() {
+double GpuMonitor::encoderUtilization() {
     unsigned int utilization;
     unsigned int sampling;
     nvmlReturn = nvmlDeviceGetEncoderUtilization(device, &utilization, &sampling);
@@ -118,7 +117,7 @@ int GpuMonitor::encoderUtilization() {
     return static_cast<int>(utilization);
 }
 
-int GpuMonitor::decoderUtilization() {
+double GpuMonitor::decoderUtilization() {
     unsigned int utilization;
     unsigned int sampling;
     nvmlReturn = nvmlDeviceGetDecoderUtilization(device, &utilization, &sampling);
@@ -144,7 +143,7 @@ std::string GpuMonitor::pState() {
     return pStateString;
 }
 
-int GpuMonitor::getClock(const nvmlClockType_t type, const nvmlClockId_t id) {
+double GpuMonitor::getClock(const nvmlClockType_t type, const nvmlClockId_t id) {
     unsigned int clockSpeed;
     nvmlReturn = nvmlDeviceGetClock(device, type, id, &clockSpeed);
 

@@ -10,7 +10,7 @@ public:
     CpuMonitor();
 
 public: // Metric getters
-    int coreCount() const;
+    double coreCount() const;
 
     double usageRateAverage();
     double usageRatePerCore(unsigned int core);

@@ -14,11 +14,11 @@ public: // Methods
     explicit GpuMonitor(unsigned int deviceIndex);
 
     // Utilization
-    int utilization();
-    int memoryUtilization();
+    double utilization();
+    double memoryUtilization();
 
     // Thermal
-    int temperature();
+    double temperature();
     // Fan speed stuff goes here, can't test it yet.
 
     // Power draw
@@ -26,11 +26,11 @@ public: // Methods
     double powerEnforcedLimit();
 
     // Clock speeds
-    int getClock(nvmlClockType_t type, nvmlClockId_t id);
-    int graphicsClockCurrent();
-    int graphicsClockMax();
-    int memoryClockCurrent();
-    int memoryClockMax();
+    double getClock(nvmlClockType_t type, nvmlClockId_t id);
+    double graphicsClockCurrent();
+    double graphicsClockMax();
+    double memoryClockCurrent();
+    double memoryClockMax();
     // Clock Event Reasons stuff goes here.
 
     // Memory (VRAM)
@@ -40,8 +40,8 @@ public: // Methods
     double memoryBusWidth();
 
     // Encoder and decoder
-    int encoderUtilization();
-    int decoderUtilization();
+    double encoderUtilization();
+    double decoderUtilization();
 
     // Misc
     std::string name();

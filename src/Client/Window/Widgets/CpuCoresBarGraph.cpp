@@ -6,7 +6,7 @@
 namespace Cesame {
 CpuCoresBarGraph::CpuCoresBarGraph(const ColorRangeList& colorRanges) {
     const Metric coreCountMetric = Monitor::getMetric(MetricType(CpuCoreCount));
-    const int coreCount = std::get<int>(coreCountMetric);
+    const int coreCount = static_cast<int>(std::get<double>(coreCountMetric));
 
     for (int i = 0; i < coreCount; i++) {
         bars.push_back(new Bar(this, MetricType(CpuUsageRatePerCore, i + 1), 100, colorRanges));

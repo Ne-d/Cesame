@@ -10,7 +10,7 @@ namespace Cesame {
 class LineGraphLabeled final : public QWidget {
 public: // Methods
     LineGraphLabeled(const QList<LineGraphElement>& lineGraphElements, unsigned int nbDataPoints,
-                     const QList<LabelElement>& labelElements);
+                     const QList<LabelElement>& labelElements, unsigned int colorRangeElementIndex = 0);
 
 private: // Data
     QVBoxLayout layout;

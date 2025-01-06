@@ -56,7 +56,7 @@ void MainWidget::setupMainDemo() {
                                                    }
                                                },
                                                nbDataPoints,
-                                               {"CPU Usage: ", CpuUsageRateAverage, "%"});
+                                               {"CPU Usage: ", CpuUsageRateAverage, "%"}, 1);
     cpuBox->addWidget(cpuUsageGraph);
 
     auto* cpuTempGraph = new LineGraphLabeled({
@@ -69,7 +69,7 @@ void MainWidget::setupMainDemo() {
                                                       })
                                                   }
                                               }, nbDataPoints,
-                                              {"CPU Temperature: ", CpuTemperaturePackage, "°C"});
+                                              {"CPU Temperature: ", CpuTemperaturePackage, "°C"}, 1);
     cpuBox->addWidget(cpuTempGraph);
 
     auto* cpuClockGraph = new LineGraphLabeled({
@@ -146,7 +146,7 @@ void MainWidget::setupMainDemo() {
                                                    {
                                                        GpuEnforcedPowerLimit, 140, 0,
                                                        ColorRangeList({
-                                                           {0, 115, white},
+                                                           {0, 116, white},
                                                            {115, 130, orange},
                                                            {130, 150, red}
                                                        })

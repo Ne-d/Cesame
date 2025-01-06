@@ -53,6 +53,8 @@ void Cesame::LineGraph::paintEvent(QPaintEvent* event) {
     painter.setPen(pen);
 
     // Draw outline rectangle
+    pen.setColor(findColor(elements.front(), elements.front().dataPoints.front()));
+    painter.setPen(pen);
     painter.drawRect(contentsRect().marginsRemoved(QMargins(0, 0, 1, 1)));
 
     // For each element (each line of the graph)
@@ -60,6 +62,7 @@ void Cesame::LineGraph::paintEvent(QPaintEvent* event) {
         QPointF lastPoint(0, 0);
 
         // For each data point of the current element
+        // FIXME: Lots of invariants to hoist out of here.
         for (int i = 0; i < element.dataPoints.size(); i++) {
             const double currentValue = element.dataPoints.at(i);
 
@@ -73,6 +76,7 @@ void Cesame::LineGraph::paintEvent(QPaintEvent* event) {
             y = std::clamp(y, 0.0, static_cast<double>(contentsRect().height()));
 
             // Find the horizontal position of the current data point on the graph.
+            // FIXME: Do we need to compute that for every point? It seems to be the same.
             const double x = contentsRect().width() - static_cast<double>(i * contentsRect().width()) / nbDataPoints;
 
             QPointF currentPoint(x, y);
@@ -85,6 +89,7 @@ void Cesame::LineGraph::paintEvent(QPaintEvent* event) {
     }
 }
 
+// FIXME: Seems like suboptimal syntax here.
 QColor Cesame::LineGraph::findColor(const LineGraphElement& element, const double value) {
     if (!element.colorRanges.isEmpty())
         return element.colorRanges.getColor(value);
