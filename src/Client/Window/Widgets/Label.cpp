@@ -1,35 +1,55 @@
 #include "Label.h"
 
+#include <QPainter>
 #include <QTimer>
+#include <utility>
 
 #include "TimeManager.h"
 
 namespace Cesame {
-Label::Label(QWidget* parent, const QList<LabelElement>& elements, const unsigned int colorRangeElementIndex) :
-    QLabel{parent},
+Label::Label(QWidget* parent, const QList<LabelElement>& elements, ColorRangeList colorRanges,
+             const unsigned int colorRangeElementIndex) :
+    QWidget{parent},
     elements(elements),
-    colorRanges({}),
+    colorRanges(std::move(colorRanges)),
     colorRangeElementIndex(colorRangeElementIndex) {
-    // NOLINT(*-unused-return-value)
     connect(&globalTimeManager.getTimer(), &QTimer::timeout, this, &Label::updateText);
 
     // TODO: Use proper styling.
-    setFont(QFont("mono", 11));
+    font.setPixelSize(26);
+    setMinimumHeight(static_cast<int>(font.pixelSize() * 1.4));
 
     // Start the global timer in case it wasn't done already.
     globalTimeManager.start();
 
-    updateText();
+    repaint();
 }
 
-void Label::updateText() {
-    if (elements.size() >= colorRangeElementIndex && !colorRanges.isEmpty())
+void Label::paintEvent(QPaintEvent* event) {
+    QWidget::paintEvent(event);
+
+    QPainter painter(this);
+    QPen pen;
+
+    QColor color = QColor::fromRgb(255, 255, 255);
+
+    if (elements.size() >= colorRangeElementIndex && !colorRanges.isEmpty()) {
         if (std::holds_alternative<MetricType>(elements.at(colorRangeElementIndex))) {
             const MetricType type = std::get<MetricType>(elements.at(colorRangeElementIndex));
             color = colorRanges.getColor(std::get<double>(Monitor::getMetric(type)));
         }
+    }
 
-    setText(buildString(color));
+    pen.setColor(color);
+    painter.setPen(pen);
+
+    painter.setFont(font);
+
+    painter.drawText(contentsRect(), buildString());
+}
+
+void Label::updateText() {
+    update();
 }
 
 QString Label::metricToString(const Metric& metric) {
@@ -42,7 +62,7 @@ QString Label::metricToString(const Metric& metric) {
     return {"?"};
 }
 
-QString Label::buildString(const QColor& color) {
+QString Label::buildString() {
     QString string;
 
     // For every label element in the list.

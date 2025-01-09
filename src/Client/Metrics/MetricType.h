@@ -71,7 +71,14 @@ enum MetricName {
     // Frames
     Frametime,
     Framerate,
-    FramerateLow
+    FramerateLow,
+
+    // Debugging
+    Debug0Percent,
+    Debug1Percent,
+    Debug10Percent,
+    Debug50Percent,
+    Debug100Percent
 };
 
 class MetricType {

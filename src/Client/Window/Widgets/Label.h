@@ -11,25 +11,27 @@
 namespace Cesame {
 using LabelElement = std::variant<MetricType, QString>;
 
-class Label final : public QLabel {
+class Label final : public QWidget {
     Q_OBJECT
 
 public:
-    explicit Label(QWidget* parent, const QList<LabelElement>& elements, unsigned int colorRangeElementIndex = 0);
+    explicit Label(QWidget* parent, const QList<LabelElement>& elements, ColorRangeList colorRanges,
+                   unsigned int colorRangeElementIndex = 0);
+    void paintEvent(QPaintEvent* event) override;
 
 public slots:
     void updateText();
 
 private: // Helper methods
     static QString metricToString(const Metric& metric);
-    QString buildString(const QColor& color);
+    QString buildString();
     static QString formatNumber(double number);
 
 private: // Data
     QList<LabelElement> elements;
     ColorRangeList colorRanges;
     unsigned int colorRangeElementIndex;
-    QColor color;
+    QFont font = QFont("mono");
 };
 } // Cesame
 

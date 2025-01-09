@@ -73,6 +73,16 @@ public: // Methods
                 return memoryMonitors.at(type.getMonitorIndex()).available();
             case MemoryUsed:
                 return memoryMonitors.at(type.getMonitorIndex()).used();
+            case Debug0Percent:
+                return 0.0;
+            case Debug1Percent:
+                return 1.0;
+            case Debug10Percent:
+                return 10.0;
+            case Debug50Percent:
+                return 50.0;
+            case Debug100Percent:
+                return 100.0;
             default:
                 throw NotImplementedException();
         }
