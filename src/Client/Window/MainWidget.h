@@ -11,6 +11,7 @@ public:
 private: // Demo setup methods
     void setupMainDemo();
     void setupLineGraphDemo();
+    void setupDebugDemo();
 };
 }
 

@@ -1,33 +1,60 @@
 #include "Label.h"
 
+#include <QPainter>
 #include <QTimer>
+#include <utility>
 
 #include "TimeManager.h"
 
 namespace Cesame {
-Label::Label(QWidget* parent, const QList<LabelElement>& elements) : QLabel{parent},
-                                                                     elements(elements) {
+Label::Label(QWidget* parent, const QList<LabelElement>& elements, ColorRangeList colorRanges,
+             const unsigned int colorRangeElementIndex) :
+    QWidget{parent},
+    elements(elements),
+    colorRanges(std::move(colorRanges)),
+    colorRangeElementIndex(colorRangeElementIndex) {
     connect(&globalTimeManager.getTimer(), &QTimer::timeout, this, &Label::updateText);
 
     // TODO: Use proper styling.
-    setFont(QFont("mono", 11));
+    font.setPixelSize(26);
+    setMinimumHeight(static_cast<int>(font.pixelSize() * 1.4));
 
     // Start the global timer in case it wasn't done already.
     globalTimeManager.start();
 
-    updateText();
+    repaint();
+}
+
+void Label::paintEvent(QPaintEvent* event) {
+    QWidget::paintEvent(event);
+
+    QPainter painter(this);
+    QPen pen;
+
+    QColor color = QColor::fromRgb(255, 255, 255);
+
+    if (elements.size() >= colorRangeElementIndex && !colorRanges.isEmpty()) {
+        if (std::holds_alternative<MetricType>(elements.at(colorRangeElementIndex))) {
+            const MetricType type = std::get<MetricType>(elements.at(colorRangeElementIndex));
+            color = colorRanges.getColor(std::get<double>(Monitor::getMetric(type)));
+        }
+    }
+
+    pen.setColor(color);
+    painter.setPen(pen);
+
+    painter.setFont(font);
+
+    painter.drawText(contentsRect(), buildString());
 }
 
 void Label::updateText() {
-    setText(buildString());
+    update();
 }
 
 QString Label::metricToString(const Metric& metric) {
     if (std::holds_alternative<double>(metric))
         return formatNumber(std::get<double>(metric));
-
-    if (std::holds_alternative<int>(metric))
-        return formatNumber(std::get<int>(metric));
 
     if (std::holds_alternative<std::string>(metric))
         return QString::fromStdString(std::get<std::string>(metric));

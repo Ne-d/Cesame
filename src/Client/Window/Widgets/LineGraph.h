@@ -4,13 +4,15 @@
 #include <deque>
 #include <QPainter>
 
+#include "ColorRange.h"
 #include "MainWidget.h"
 #include "MetricType.h"
 
 namespace Cesame {
 class LineGraphElement {
 public: // Methods
-    LineGraphElement(MetricType metricType, double maxValue, double minValue = 0);
+    LineGraphElement(MetricType metricType, double maxValue, double minValue = 0,
+                     ColorRangeList colorRanges = ColorRangeList(QList<ColorRange>()));
 
     /**
      * Updates the list of data points with a new value from the Monitor.
@@ -26,6 +28,8 @@ public: // This is basically a struct so the fields are public because why the f
     double maxValue;
     double minValue = 0;
 
+    ColorRangeList colorRanges;
+
     std::deque<double> dataPoints;
 };
 
@@ -38,6 +42,9 @@ public: // Methods
 public slots:
     void updateData();
     void paintEvent(QPaintEvent* event) override;
+
+private: // Methods
+    static QColor findColor(const LineGraphElement& element, double value);
 
 private: // Data
     QList<LineGraphElement> elements;

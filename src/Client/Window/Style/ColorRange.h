@@ -36,6 +36,8 @@ public:
     explicit ColorRangeList(QList<ColorRange> list);
     [[nodiscard]] QColor getColor(double value) const;
 
+    [[nodiscard]] bool isEmpty() const;
+
 private:
     QList<ColorRange> colorRanges;
 };
