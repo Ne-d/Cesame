@@ -46,7 +46,8 @@ void MainWidget::setupMainDemo() {
     const QPointer miscBox = new QVBoxLayout();
     mainBox->addLayout(miscBox);
 
-    // Labels
+
+    // Widgets
     // CPU
     ColorRangeList cpuUsageColorRanges({
         {0, 75, white},
